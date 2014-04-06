@@ -13,7 +13,7 @@ Users!
 - Jana arrives on the T website. She sees that a few other people have been requesting stats about other subreddits, including /r/cats, one of her favorites.
 - She reads through the statistics about /r/cats for a while. Apparently the users of /r/cats are more upvote-happy than average, and they also have lots of discussion on posts instead of just posting links to resources. She isn't surprised, but this is mildly interesting, and more interesting than work.
 - She reads through the statistics for a few other subs, then tries running the T-bot on her favorite sub /r/talesfromtechsupport. She is gratified to see that TFTS now appears on the list of recently explored subs for other users to explore. She's made a contribution!
-- When the stats for TFTS load, she finds that she's one of the most downvote-happy people in the sub. She's annoyed at the site for pointing this out, but decides that she should think before she downvotes in the future.
+- Jana sees that you can log in to learn abuot yourself and she finds that she's one of the most downvote-happy people who ever used the site. She's annoyed at the site for pointing this out, but decides that she should think before she downvotes in the future.
 - She explores a few more subs and then puts her phone away. Back to work.
 
 ## Sam's journey
@@ -30,10 +30,11 @@ Users!
 
 ## Ming's journey
 
-- Ming founded /r/Singapore and left it to fester for a while. Now he's back and is facing complaints that the subreddit. In fact, a new user just left, and she posted some statistics from a website that he is curious about.
-- Ming gets on his computer in case the website isn't mobile-friendly, and goes to the website. He sees that /r/Singapore is on the list of recently explored subs and v iews it.
-- It appears that his users are extremely downvote-happy, both on posts and on comments. In particular, /u/jerkface has downvoted every single post ever made on the sub.
+- Ming founded /r/Singapore and left it to fester for a while. Now he's back and is facing complaints that the subreddit sucks. In fact, a new user just left, and she posted some statistics from a website that he is curious about.
+- Ming gets on his computer in case the website isn't mobile-friendly, and goes to the website. He sees that /r/Singapore is on the list of recently explored subs and views it.
+- It appears that his users are extremely downvote-happy, both on posts and on comments. They also have pretty low karma across reddit in general. In particular, /u/jerkface has downvoted every single post ever made on the sub.
 - He sees a special note to moderators in the corner and expands it. The note gives him some suggestions for what he can do based on the behavior that his users seem to be exhibiting.
+- He tries to close the note and finds a bug in the jQuery. He submits a bug report to the creators.
 - Ming goes back to the subreddit and posts a new mod post warning people against excessive downvoting and the hazing of new members. He also messages /u/jerkface with a warning, and the new user who left with an apology. He hopes that this will help.
 
 ## Ali's journey
