@@ -24,5 +24,5 @@ insultingPosts = 0
 for comment in flat_comments:
     if not (isinstance(comment, praw.objects.MoreComments)) and any(string in comment.body.lower() for string in insultWords):
         insultingPosts = insultingPosts + 1
-fraction = insultingPosts / submission.num_comments
+fraction = insultingPosts / float(submission.num_comments)
 print(str(fraction*100) + " percent of this submission's top comments are possibly insulting.")
