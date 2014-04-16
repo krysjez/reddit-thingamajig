@@ -1,6 +1,7 @@
 import pg8000
 
 #jessica's username is jessicayang, and her password is testing09876
+#gloria's username is gloriama, password is testing445566
 conn = pg8000.connect(user="michaelnestler", password="testing54321", database="thingamajig", host="cs437dbinstance.cpa1yidpzcc3.us-east-1.rds.amazonaws.com")
 
 conn.autocommit = True #by default this is false. if it is false, then when you change the database (such as insert, update) then you have to do conn.commit() afterwards for the changes to be kept. 
