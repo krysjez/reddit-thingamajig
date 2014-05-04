@@ -57,11 +57,11 @@
           </div>
           <!-- </div> -->
           <div class='reddit-search small-3 columns'>
-            <form>
-              <input type='text' id='subreddit-input'></input>
+            <form action="resultpage.php" method="post">
+              <input type='text' id='subreddit-input' name="subreddit-input"></input>
           </div>
           <div class="reddit-search small-2 columns left">
-            <a href="#" class='button' id='reddit-search-button'>Give me numbers!</a>
+            <input type="submit" class='button' id='reddit-search-button' value="Give me numbers!">
         </div>
 
              
@@ -76,6 +76,7 @@
     <div class='row'> <!-- main content header row -->
       <div class="small-12 columns">
         <p>Here are some interesting summaries of the information collected from all user searches done so far, last updated <b>PROBABLY NEED A DATABASE ENTRY FOR THIS</b>. Search for a subreddit of your own above to refresh our data!</p>
+        <?php echo '<p> This sentence is brought to you by PHP</p>'; ?>
       </div>
     </div> <!-- end main content header row -->
 
