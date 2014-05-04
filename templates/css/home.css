@@ -21,8 +21,8 @@
     top: 100%;
     left: 50%;
     margin: 0 0 0 -1em;
-    border: 2em solid transparent;
-    border-top: 2em solid white;
+    border: 1.5em solid transparent;
+    border-top: 1.5em solid white;
 }
 
 .search-bar {
@@ -30,19 +30,21 @@
 	color: white;
 	width: 100%;
 	text-align: center;
+	padding-top: 25px;
+	padding-bottom: 10px;
 }
 
-
-.search-bar .reddit-prefix {
+.reddit-prefix {
 	display: inline-block;
-	padding-top: 50px;
 	text-align: right;
 	font-size: 40px;
+	padding-right: 0;
 }
 
-.search-bar .reddit-search {
-	display: inline-block;
-	width: 500px;
+#reddit-search-button {
+	border-width: 3px;
+	border-color: white;
+	font-weight: bold;
 }
 
 .search-bar input[type="text"] { 
@@ -50,7 +52,6 @@
 	font-size: 40px;
 	font-weight: bold;
 	color: white;
-	/*margin: 0;*/
 	background-color: orangered;
 	border-bottom-color: white;
 	border-width: 0 0 3px 0;
@@ -58,7 +59,6 @@
 
 .search-bar input:focus {
 	outline: none; 
-	border-style: dashed;
 }
 
 .size-12 { font-size: 12px; }
