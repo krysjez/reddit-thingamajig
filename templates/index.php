@@ -57,15 +57,11 @@
           </div>
           <!-- </div> -->
           <div class='reddit-search small-3 columns'>
-            <form action="resultpage.php" method="post">
+            <form action="result.php" method="post">
               <input type='text' id='subreddit-input' name="subreddit-input"></input>
           </div>
           <div class="reddit-search small-2 columns left">
-<<<<<<< HEAD:templates/index.html
-            <a href="result.html" class='button search-button' id='reddit-search-button'>Give me numbers!</a>
-=======
             <input type="submit" class='button' id='reddit-search-button' value="Give me numbers!">
->>>>>>> 9b0ec715bf50e156c2b2c1708748455aceb5358c:templates/index.php
         </div>
 
              

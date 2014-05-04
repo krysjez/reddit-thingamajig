@@ -45,7 +45,7 @@
       <div class='row search-bar'> <!-- search bar -->
           <div class='small-5 columns search-again-prefix'>
             <i class='fi-social-reddit size-60'></i>
-            Here's what we found about /r/
+            Here's what we found about /r/<?php echo $_POST["subreddit-input"]; ?>
           </div>
           <div class='reddit-search small-3 columns'>
           <form>
