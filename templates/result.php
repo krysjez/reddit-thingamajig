@@ -101,7 +101,7 @@
               <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
               <ol>
                 <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
+                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong>/<li>
                 <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
               </ol>
             </div>
