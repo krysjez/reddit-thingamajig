@@ -48,11 +48,11 @@
             Here's what we found about /r/<?php echo $_POST["subreddit-input"]; ?>
           </div>
           <div class='reddit-search small-3 columns'>
-          <form>
-              <input type='text' id='search-again-input' placeholder='name'></input>
+          <form action="result.php" method="post">
+              <input type='text' id='search-again-input' placeholder='name' name="subreddit-input"></input>
           </div>
           <div class="reddit-search small-2 columns left">
-            <a href="#" class='button search-button' id='search-again-button'>Crunch numbers again!</a>
+            <input type="submit" class='button search-button' id='reddit-search-button' value="Crunch numbers again!">
           </div>
           </form>
           </div>
