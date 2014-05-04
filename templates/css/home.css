@@ -24,6 +24,19 @@ body, h1, h2, h3 {
 	font-size: 5em;
 }
 
+.huge {
+	font-weight: bold;
+	font-size: 3em;
+}
+
+.upvote {
+	color: orangered;
+}
+
+.downvote {
+	color: #5959FF; /*darker than #CCCCFF for readability*/
+}
+
 .jumbo::after {
     position: absolute;
     content: '';
@@ -51,7 +64,14 @@ body, h1, h2, h3 {
 	padding-right: 0;
 }
 
-#reddit-search-button {
+.search-again-prefix {
+	display: inline-block;
+	text-align: right;
+	font-size: 36px;
+	padding-right: 0;
+}
+
+.search-button {
 	border-width: 3px;
 	border-color: white;
 	font-weight: bold;
@@ -69,6 +89,19 @@ body, h1, h2, h3 {
 
 .search-bar input:focus {
 	outline: none; 
+}
+
+::-webkit-input-placeholder { /* WebKit browsers */
+    color: white;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: white;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: white;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color: white;
 }
 
 .stat-box {
