@@ -71,7 +71,6 @@ upsert_to_submissions(submission.id, submission.permalink, submission.ups, submi
 
 
 #here, i only insert a row if it doesn't exist already. no need to update anything
-#here, i only insert a row if it doesn't exist already. no need to update anything
 def insert_to_user_submitted(username, submissionid):
 	sqlstr1 = "insert into public.\"User_submitted\" (\"Username\", \"SubmissionID\") select '"+username+"', '"+submissionid+"' where not exists (select 1 from public.\"User_submitted\" where \"Username\" = '"+username+"' and \"SubmissionID\" = '"+submissionid+"');"
 	cursor.execute(sqlstr1)

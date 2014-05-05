@@ -27,10 +27,10 @@ cur_subreddit = 'thingamajig437'
 
 #username should be a string of length no greater than 20, linkkarma and commentkarma must be integers. timejoined should be passed in unix format, and the function will convert it to psql's timestamp format
 def upsert_to_users(username, linkkarma, commentkarma, timejoined):
-	sqlstr1 = "update public.\"Users\" set \"LinkKarma\" = " +str(linkkarma)+ ", \"CommentKarma\" = " +str(commentkarma)+ ", \"TimeJoined\" = to_timestamp("+str(timejoined)+"), \"TimeRecorded\" = (select now()) where \"Username\" = '"+username+"';"
+	sqlstr1 = "update public.\"Users\" set \"LinkKarma\" = " +str(linkkarma)+ ", \"CommentKarma\" = " +str(commentkarma)+ ", \"TimeJoined\" = to_timestamp("+str(timejoined)+"), \"TimeRecorded\" = (select now()) where \"Username\" = '"+str(username)+"';"
 	#print(sqlstr1)
 	cursor.execute(sqlstr1)
-	sqlstr2 = "insert into public.\"Users\" (\"Username\", \"LinkKarma\", \"CommentKarma\", \"TimeJoined\", \"TimeRecorded\") select '"+username+"', "+str(linkkarma)+", "+str(commentkarma)+", to_timestamp("+str(timejoined)+"), now() where not exists (select 1 from public.\"Users\" where \"Username\" = '"+username+"');"
+	sqlstr2 = "insert into public.\"Users\" (\"Username\", \"LinkKarma\", \"CommentKarma\", \"TimeJoined\", \"TimeRecorded\") select '"+str(username)+"', "+str(linkkarma)+", "+str(commentkarma)+", to_timestamp("+str(timejoined)+"), now() where not exists (select 1 from public.\"Users\" where \"Username\" = '"+str(username)+"');"
 	#print(sqlstr2)
 	cursor.execute(sqlstr2)
 #end of fn	
@@ -72,11 +72,11 @@ upsert_to_submissions(submission.id, submission.permalink, submission.ups, submi
 
 #here, i only insert a row if it doesn't exist already. no need to update anything
 def insert_to_user_submitted(username, submissionid):
-	sqlstr1 = "insert into public.\"User_submitted\" (\"Username\", \"SubmissionID\") select '"+username+"', '"+submissionid+"' where not exists (select 1 from public.\"User_submitted\" where \"Username\" = '"+username+"' and \"SubmissionID\" = '"+submissionid+"');"
+	sqlstr1 = "insert into public.\"User_submitted\" (\"Username\", \"SubmissionID\") select '"+str(username)+"', '"+submissionid+"' where not exists (select 1 from public.\"User_submitted\" where \"Username\" = '"+str(username)+"' and \"SubmissionID\" = '"+submissionid+"');"
 	cursor.execute(sqlstr1)
 	
 def insert_to_user_commented(username, commentid):
-	sqlstr1 = "insert into public.\"User_commented\" (\"Username\", \"CommentID\") select '"+username+"', '"+commentid+"' where not exists (select 1 from public.\"User_commented\" where \"Username\" = '"+username+"' and \"CommentID\" = '"+commentid+"');"
+	sqlstr1 = "insert into public.\"User_commented\" (\"Username\", \"CommentID\") select '"+str(username)+"', '"+commentid+"' where not exists (select 1 from public.\"User_commented\" where \"Username\" = '"+str(username)+"' and \"CommentID\" = '"+commentid+"');"
 	cursor.execute(sqlstr1)
 	
 #it's possible for a user to be a subreddit moderator, then later no longer be a moderator. if we want to keep track of that, then each time we update a subreddit's moderators, we might want to just drop all the records for that subreddit in this table, and then re-insert
