@@ -14,7 +14,7 @@ from
 ) as t1
 natural join
 (
-	select "SubredditName"
+	select "SubredditName", "Subscribers"
 	from "Subreddits"
 	where "Subscribers" >= 100
 ) as t2
