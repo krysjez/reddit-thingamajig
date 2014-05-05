@@ -48,8 +48,8 @@
             Here's what we found about /r/
           </div>
           <div class='reddit-search small-3 columns'>
-          <form action="result.php" method="post">
-              <input type='text' id='search-again-input' placeholder='<?php echo $_POST["subreddit-input"]; ?>' name="subreddit-input"></input>
+          <form action="result.php" method="get">
+              <input type='text' id='search-again-input' placeholder='<?php echo $_GET["subreddit-input"]; ?>' name="subreddit-input"></input>
           </div>
           <div class="reddit-search small-2 columns left">
             <input type="submit" class='button search-button' id='reddit-search-button' value="Crunch numbers again!">

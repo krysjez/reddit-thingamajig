@@ -57,7 +57,7 @@
           </div>
           <!-- </div> -->
           <div class='reddit-search small-3 columns'>
-            <form action="result.php" method="post">
+            <form action="result.php" method="get">
               <input type='text' id='subreddit-input' name="subreddit-input"></input>
           </div>
           <div class="reddit-search small-2 columns left">
@@ -118,9 +118,11 @@ EOD;
           <ol>
             <?php 
             for ($i="0"; $i<2; $i=$i+1){
-                echo "<li><strong>";
+                echo "<li><a href='result.php?subreddit-input=";
                 echo $table[$i]["SubredditName"];
-                echo "</strong> with trigger happiness index <strong>";
+                echo "'><strong>";
+                echo $table[$i]["SubredditName"];
+                echo "</strong></a> with trigger happiness index <strong>";
                 echo round($table[$i]["triggerhappiness"]*10000,2);
                 echo "</strong></li>";
             }
