@@ -45,11 +45,12 @@
       <div class='row search-bar'> <!-- search bar -->
           <div class='small-5 columns search-again-prefix'>
             <i class='fi-social-reddit size-60'></i>
-            Here's what we found about /r/<?php echo $_POST["subreddit-input"]; ?>
+            Here's what we found about /r/
           </div>
           <div class='reddit-search small-3 columns'>
           <form>
-              <input type='text' id='search-again-input' placeholder='name'></input>
+            <!-- TODO: Michael, is this right? -->
+              <input type='text' id='search-again-input' placeholder='<?php echo $_POST["subreddit-input"]; ?>'></input>
           </div>
           <div class="reddit-search small-2 columns left">
             <a href="#" class='button search-button' id='search-again-button'>Crunch numbers again!</a>
@@ -97,7 +98,7 @@
         <div class='row'> <!-- sub row 1 -->
           <div class='small-6 columns'>
             <div class='stat-box'>
-              <h3><i class='fi-heart'></i>&nbsp;Most ??? subreddits</h3>
+              <h3><i class='fi-heart'></i>&nbsp;Users with best karma</h3>
               <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
               <ol>
                 <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
