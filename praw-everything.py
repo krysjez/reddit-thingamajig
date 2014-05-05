@@ -20,7 +20,7 @@ MAX_COMMENTS = 500
 # Check reddit messages later to see if /r/redditdev replied
 
 # TODO: Store the subreddit name from PHP call as SubredditName
-
+SubredditName="russia"
 # Need to make this actually the subreddit the user wants
 subreddit = r.get_subreddit(SubredditName)
 
@@ -60,7 +60,7 @@ def insert_to_user_commented(username, commentid):
 upsert_to_subreddits(subreddit.display_name, subreddit.subscribers)
 
 badWords = ['idiot', 'stupid', 'moron', 'asshole', 'arsehold', 'bastard', 'bitch', 'clusterfuck', 'cock', 'cocks', 'cunt', 'dick', 
-'faggot', 'fuck', 'goatcx', 'goatse', 'piece of shit', 'shit', 'damn', 'crap', 'piss', 'pussy', 'fag', 'slut', 'damn']
+'faggot', 'fuck', 'goatcx', 'goatse', 'shit', 'damn', 'crap', 'piss', 'pussy', 'fag', 'slut', 'damn']
 
 # Attributes for table Submissions
 for submission in subreddit.get_new(limit=MAX_SUBMISSIONS):
