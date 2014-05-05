@@ -64,34 +64,33 @@ badWords = ['idiot', 'stupid', 'moron', 'asshole', 'arsehold', 'bastard', 'bitch
 
 # Attributes for table Submissions
 for submission in subreddit.get_new(limit=MAX_SUBMISSIONS):
+	upsert_to_submissions(submission.id, submission.permalink, submission.ups, submission.downs, submission.title, submission.url, submission.selftext, submission.created_utc, subreddit.display_name)
+	# User who posted the submission
+	user = r.get_redditor(submission.author)
+	upsert_to_users(redditor.name, redditor.link_karma, redditor.comment_karma, redditor.created_utc)
+	insert_to_user_submitted(redditor.name, submission.id) # Create user_submitted entry
 	enthu = 0
 	lower = 0
 	# Attributes for table Comments
 	#submission.replace_more_comments(limit=None, threshold=0)
 	flat_comments = praw.helpers.flatten_tree(submission.comments)
-		for comment in flat_comments:
-			badWordCount = 0
-			wordCount = 0
-			CommentText = comment.body
-			if not (isinstance(comment, praw.objects.MoreComments)) and any(string in comment.body.lower() for string in badWords):
-        		insultingPosts = insultingPosts + 1
-			enthu += CommentText.count('?') + CommentText.count('!') + sum(x.isupper() for x in CommentText)
-			lower += sum(x.islower() for x in CommentText)
-			EnthusiasmScore = enthu+1/float(lower+1)
-			for w in re.findall(r"\w+", CommentText):
-    			if w in badWords:
-        			badWordCount+=1
-        		wordCount+=1
-			ProfanityScore = badWords+1/float(wordCount+1)
-			upsert_to_comments(comment.id, comment.permalink, comment._submission.id, comment.ups, comment.downs, comment.body, comment.created_utc, EnthusiasmScore, ProfanityScore)
-			# User who posted the comment
-			user = r.get_redditor(comment.author)
-			upsert_to_users(redditor.name, redditor.link_karma, redditor.comment_karma, redditor.created_utc)
-			insert_to_user_commented(redditor.name, comment.id) # Create user_commented entry
-	
-	ProfanityScore = insultingPosts/float(submission.num_comments+1)
-	# User who posted the submission
-	user = r.get_redditor(submission.author)
-	upsert_to_users(redditor.name, redditor.link_karma, redditor.comment_karma, redditor.created_utc)
-	insert_to_user_submitted(redditor.name, submission.id) # Create user_submitted entry
-	upsert_to_submissions(submission.id, submission.permalink, submission.ups, submission.downs, submission.title, submission.url, submission.selftext, submission.created_utc, subreddit.display_name)
+	for comment in flat_comments:
+		badWordCount = 0
+		wordCount = 0
+		CommentText = comment.body
+		if not (isinstance(comment, praw.objects.MoreComments)) and any(string in comment.body.lower() for string in badWords):
+    		insultingPosts = insultingPosts + 1
+		enthu = CommentText.count('?') + CommentText.count('!') + sum(x.isupper() for x in CommentText)
+		lower = sum(x.islower() for x in CommentText)
+		EnthusiasmScore = (enthu+1)/float(lower+1)
+		for w in re.findall(r"\w+", CommentText):
+			if w in badWords:
+    			badWordCount+=1
+    		wordCount+=1
+		ProfanityScore = (badWordCount+1)/float(wordCount+1)
+		upsert_to_comments(comment.id, comment.permalink, comment._submission.id, comment.ups, comment.downs, comment.body, comment.created_utc, EnthusiasmScore, ProfanityScore)
+		# User who posted the comment
+		user = r.get_redditor(comment.author)
+		upsert_to_users(redditor.name, redditor.link_karma, redditor.comment_karma, redditor.created_utc)
+		insert_to_user_commented(redditor.name, comment.id) # Create user_commented entry
+
