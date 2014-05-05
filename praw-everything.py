@@ -47,5 +47,5 @@ for submission in subreddit.get_new(limit=MAX):
 			CommentText = comment.body
 			TimeSubmitted = datetime.datetime.fromtimestamp(int(comment.created_utc)).strftime('%Y-%m-%d %H:%M:%S')
 			TimeRecorded = strftime("%Y-%m-%d %H:%M:%S")
-			EnthusiasmRatio = (CommentText.count('?') + CommentText.count('!') + sum(x.isupper() for x in CommentText))/float(sum(x.islower() for x in CommentText))
+			EnthusiasmScore = (CommentText.count('?') + CommentText.count('!') + sum(x.isupper() for x in CommentText) +1)/float(sum(x.islower() for x in CommentText) +1)
 			# TODO: Write these to the table Comments now
