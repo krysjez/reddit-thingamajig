@@ -4,7 +4,11 @@ $dbconn = pg_connect("host=cs437dbinstance.cpa1yidpzcc3.us-east-1.rds.amazonaws.
     or die('Could not connect: ' . pg_last_error());
 
 // Performing SQL query
-$query = 'SELECT * FROM "Subreddits"';
+//$query = 'SELECT * FROM "Subreddits"';
+$query = <<<'EOD'
+SELECT *
+FROM "Subreddits"
+EOD;
 $result = pg_query($query) or die('Query failed: ' . pg_last_error());
 
 // Printing results in HTML
