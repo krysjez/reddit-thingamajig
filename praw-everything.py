@@ -61,6 +61,7 @@ upsert_to_subreddits(subreddit.display_name, subreddit.subscribers)
 
 badWords = ['idiot', 'stupid', 'moron', 'asshole', 'arsehold', 'bastard', 'bitch', 'clusterfuck', 'cock', 'cocks', 'cunt', 'dick', 
 'faggot', 'fuck', 'goatcx', 'goatse', 'shit', 'damn', 'crap', 'piss', 'pussy', 'fag', 'slut', 'damn']
+# Feel free to add to this list if you think of more...
 
 # Attributes for table Submissions
 for submission in subreddit.get_new(limit=MAX_SUBMISSIONS):

@@ -18,7 +18,7 @@
       <!-- Title Area -->
       <li class="name">
         <h1>
-          <a href="#">
+          <a href="index.html">
             Reddit Thingamajig
           </a>
         </h1>
@@ -29,7 +29,7 @@
     <section class="top-bar-section">
       <!-- Right Nav Section -->
       <ul class="right">
-        <li><a href="#">Made by krysjez/versere/augusthex</a></li>
+        <li><a href="#">Made by <a href='http://jessicayang.org'>krysjez</a>/versere/augusthex</a></li>
         <li class="divider"></li>
         <li>          
           <a href='mailto:reddit@jessicayang.org'><i class='fi-mail' style='color:white; margin-right: 10px'></i>Feedback</a>
@@ -61,11 +61,9 @@
               <input type='text' id='subreddit-input' name="subreddit-input"></input>
           </div>
           <div class="reddit-search small-2 columns left">
-            <input type="submit" class='button' id='reddit-search-button' value="Give me numbers!">
+            <input type="submit" class='button search-button' id='reddit-search-button' value="Give me numbers!">
         </div>
 
-             
-              <!-- <i class='fi-magnifying-glass size-48'></i> -->
             </form>
           </div>
       </div> <!-- end search bar -->
@@ -76,7 +74,6 @@
     <div class='row'> <!-- main content header row -->
       <div class="small-12 columns">
         <p>Here are some interesting summaries of the information collected from all user searches done so far, last updated <b>PROBABLY NEED A DATABASE ENTRY FOR THIS</b>. Search for a subreddit of your own above to refresh our data!</p>
-        <?php echo '<p> This sentence is brought to you by PHP</p>'; ?>
       </div>
     </div> <!-- end main content header row -->
 
@@ -120,7 +117,7 @@
       <div class='small-4 columns'>
         <div class='stat-box'>
           <h3><i class='fi-volume'></i>&nbsp;Most enthusiastic subreddits</h3>
-          <p>LOOK AT THIS INCREDIBLE VIDEO!!!<br> Ratio of UPPERCASE and punctuation to lowercase.</p>
+          <p>THESE PEOPLE USE A LOT OF CAPS AND PUNCTUATION?!?!!<br> Ratio of UPPERCASE and ?! to lowercase.</p>
           <ol>
             <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
             <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
@@ -130,8 +127,8 @@
       </div>
       <div class='small-4 columns'>
         <div class='stat-box'>
-          <h3><i class='fi-heart'></i>&nbsp;Most ??? subreddits</h3>
-          <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
+          <h3><i class='fi-comment-minus'></i>&nbsp;Most profane subreddits</h3>
+          <p>#@$^$*#&!<br> Profanity as a percentage of all words in comments.</p>
           <ol>
             <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
             <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
@@ -141,8 +138,8 @@
       </div>
       <div class='small-4 columns'>
         <div class='stat-box'>
-          <h3><i class='fi-heart'></i>&nbsp;Most asdlfkja subreddits</h3>
-          <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
+          <h3><i class='fi-heart'></i>&nbsp;Most verbose??? subreddits</h3>
+          <p><a href="http://giantitp.com">Vaarsuvius</a> would be proud.<br> Average number of words per post.</p>
           <ol>
             <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
             <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
@@ -155,7 +152,7 @@
     <div class="row bigwidth"> <!-- main content row 3 -->
      <div class="small-4 columns">
       <div class="stat-box">
-        <h3>Average comments-to-votes ratio</h3>
+        <h3>Average comments-to-votes ratio or something, something nice to show in a chart</h3>
         Insert a chart here
       </div>
      </div>

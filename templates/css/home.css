@@ -69,6 +69,7 @@ body, h1, h2, h3 {
 	text-align: right;
 	font-size: 36px;
 	padding-right: 0;
+	padding-bottom: 5px;
 }
 
 .search-button {

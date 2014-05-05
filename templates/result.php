@@ -13,12 +13,12 @@
   </head>
   <body>
    
-  <nav class="top-bar" data-topbar>
+   <nav class="top-bar" data-topbar>
     <ul class="title-area">
       <!-- Title Area -->
       <li class="name">
         <h1>
-          <a href="#">
+          <a href="index.html">
             Reddit Thingamajig
           </a>
         </h1>
@@ -29,7 +29,7 @@
     <section class="top-bar-section">
       <!-- Right Nav Section -->
       <ul class="right">
-        <li><a href="#">Made by krysjez/versere/augusthex</a></li>
+        <li><a href="#">Made by <a href='http://jessicayang.org'>krysjez</a>/versere/augusthex</a></li>
         <li class="divider"></li>
         <li>          
           <a href='mailto:reddit@jessicayang.org'><i class='fi-mail' style='color:white; margin-right: 10px'></i>Feedback</a>
@@ -121,7 +121,7 @@
         <div class='row'> <!-- sub row 2 -->
           <div class='small-6 columns'>
             <div class='stat-box'>
-              <h3><i class='fi-heart'></i>&nbsp;Most ??? subreddits</h3>
+              <h3><i class='fi-heart'></i>&nbsp;Most profane users</h3>
               <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
               <ol>
                 <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
