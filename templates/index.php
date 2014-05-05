@@ -18,7 +18,7 @@
       <!-- Title Area -->
       <li class="name">
         <h1>
-          <a href="index.html">
+          <a href="index.php">
             Reddit Thingamajig
           </a>
         </h1>
@@ -29,7 +29,7 @@
     <section class="top-bar-section">
       <!-- Right Nav Section -->
       <ul class="right">
-        <li><a href="#">Made by <a href='http://jessicayang.org'>krysjez</a>/versere/augusthex</a></li>
+        <li><a href="#credits">Made by krysjez/versere/augusthex</a></li>
         <li class="divider"></li>
         <li>          
           <a href='mailto:reddit@jessicayang.org'><i class='fi-mail' style='color:white; margin-right: 10px'></i>Feedback</a>
@@ -178,8 +178,8 @@
                   <p>Made for Introduction to Database Systems, CPSC 473 Spring 2014, Yale University</p>
               </div>
 
-              <div class='large-6 columns'>
-                <p></p>
+              <div class='large-6 columns' id='credits'>
+                <p>krysjez is <a href='http://jessicayang.org'>Jessica Yang</a>; versere is Kevin Liu; augusthex is <a href='http://michaelnestler.com'>Michael Nestler</a>.</p>
               </div>
  
             </div>
