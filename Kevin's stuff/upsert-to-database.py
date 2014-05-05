@@ -1,3 +1,4 @@
+#Kevin Liu
 import praw
 import pg8000
 
@@ -37,15 +38,15 @@ def upsert_to_users(username, linkkarma, commentkarma, timejoined):
 redditor = r.get_redditor("versere")
 upsert_to_users(redditor.name, redditor.link_karma, redditor.comment_karma, redditor.created_utc)
 
-def upsert_to_comments(commentid, permalink, upvotes, downvotes, commenttext, timesubmitted):
-	sqlstr1 = "update public.\"Comments\" set \"Permalink\" = '"+permalink+"', \"Upvotes\" = "+str(upvotes)+", \"Downvotes\" = "+str(downvotes)+", \"CommentText\" = '"+commenttext+"', \"TimeSubmitted\" = to_timestamp("+str(timesubmitted)+"), \"TimeRecorded\" = (select now()) where \"CommentID\" = '"+commentid+"';"
+def upsert_to_comments(commentid, permalink, submissionid, upvotes, downvotes, commenttext, timesubmitted):
+	sqlstr1 = "update public.\"Comments\" set \"Permalink\" = '"+permalink+"', \"SubmissionID\" = '"+submissionid+"', \"Upvotes\" = "+str(upvotes)+", \"Downvotes\" = "+str(downvotes)+", \"CommentText\" = '"+commenttext+"', \"TimeSubmitted\" = to_timestamp("+str(timesubmitted)+"), \"TimeRecorded\" = (select now()) where \"CommentID\" = '"+commentid+"';"
 	cursor.execute(sqlstr1)
-	sqlstr2 = "insert into public.\"Comments\" (\"CommentID\", \"Permalink\", \"Upvotes\", \"Downvotes\", \"CommentText\", \"TimeSubmitted\", \"TimeRecorded\") select '"+commentid+"', '"+permalink+"', "+str(upvotes)+", "+str(downvotes)+", '"+commenttext+"', to_timestamp("+str(timesubmitted)+"), now() where not exists (select 1 from public.\"Comments\" where \"CommentID\" = '"+commentid+"');"
+	sqlstr2 = "insert into public.\"Comments\" (\"CommentID\", \"Permalink\", \"SubmissionID\", \"Upvotes\", \"Downvotes\", \"CommentText\", \"TimeSubmitted\", \"TimeRecorded\") select '"+commentid+"', '"+permalink+"', '"+submissionid+"', "+str(upvotes)+", "+str(downvotes)+", '"+commenttext+"', to_timestamp("+str(timesubmitted)+"), now() where not exists (select 1 from public.\"Comments\" where \"CommentID\" = '"+commentid+"');"
 	cursor.execute(sqlstr2)
 	
 submission = r.get_submission(submission_id='21oxk0')
 comment = submission.comments[1]
-upsert_to_comments(comment.id, comment.permalink, comment.ups, comment.downs, comment.body, comment.created_utc)
+upsert_to_comments(comment.id, comment.permalink, comment._submission.id, comment.ups, comment.downs, comment.body, comment.created_utc)
 
 #subredditname: a string. subscribers: integer >= 0
 def upsert_to_subreddits(subredditname, subscribers):
