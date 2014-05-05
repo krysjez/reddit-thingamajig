@@ -70,8 +70,6 @@ def upsert_to_submissions(submissionid, permalink, upvotes, downvotes, title, li
 upsert_to_submissions(submission.id, submission.permalink, submission.ups, submission.downs, submission.title, submission.url, submission.selftext, submission.created_utc, subreddit.display_name)
 	
 
-
-#here, i only insert a row if it doesn't exist already. no need to update anything
 #here, i only insert a row if it doesn't exist already. no need to update anything
 def insert_to_user_submitted(username, submissionid):
 	sqlstr1 = "insert into public.\"User_submitted\" (\"Username\", \"SubmissionID\") select '"+username+"', '"+submissionid+"' where not exists (select 1 from public.\"User_submitted\" where \"Username\" = '"+username+"' and \"SubmissionID\" = '"+submissionid+"');"

@@ -24,7 +24,11 @@ order by TriggerHappiness desc
 select "SubredditName", AvgProfanityScore
 (
 	select "SubredditName", avg(ProfanityScore) as AvgProfanityScore
-	from "Submissions"
+	from 
+	(
+		select "Comments"."ProfanityScore" as "ProfanityScore", "Submissions"."SubredditName" as "SubredditName"
+		from "Comments" join "Submissions" using "SubmissionID"
+	) as t3
 	group by "SubredditName"
 ) as t1
 natural join
@@ -36,12 +40,18 @@ natural join
 order by AvgProfanityScore desc
 ;
 
+
+
 --Most enthusiastic subreddits
 --Gives subreddits that use a lot of uppercase characters and exclamation marks
 select "SubredditName", AvgEnthusiasmScore
 (
 	select "SubredditName", avg(EnthusiasmScore) as AvgEnthusiasmScore
-	from "Submissions"
+	from 
+	(
+		select "Comments"."EnthusiasmScore" as "EnthusiasmScore", "Submissions"."SubredditName" as "SubredditName"
+		from "Comments" join "Submissions" using "SubmissionID"
+	) as t3
 	group by "SubredditName"
 ) as t1
 natural join
@@ -87,3 +97,45 @@ natural join
 	where "Subscribers" >= 100
 ) as t2
 order by Niceness asc
+
+--Most profane users, based on their comments. Only users with at least 10 comments are considered. 
+select "Username", AvgProfanityScore
+(
+	select "Username", avg(ProfanityScore) as AvgProfanityScore
+	from ("Users" natural join "User_commented") join "Comments" using "CommentID"
+	group by "Username"
+) as t1
+natural join
+(
+	select "Username"
+	from
+	(
+		select "Username", count(*) as "CommentCount" 
+		from "User_commented" 
+		group by "Username"
+	)
+	where "CommentCount" >= 10
+) as t2
+order by AvgProfanityScore desc
+;
+
+--Most enthusiastic users, based on their comments. Only users with at least 
+select "Username", AvgEnthusiasmScore
+(
+	select "Username", avg(EnthusiasmScore) as AvgEnthusiasmScore
+	from ("Users" natural join "User_commented") join "Comments" using "CommentID"
+	group by "Username"
+) as t1
+natural join
+(
+	select "Username"
+	from
+	(
+		select "Username", count(*) as "CommentCount" 
+		from "User_commented" 
+		group by "Username"
+	)
+	where "CommentCount" >= 10
+) as t2
+order by AvgEnthusiasmScore desc
+;
