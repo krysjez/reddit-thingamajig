@@ -76,6 +76,12 @@
         <p>Here are some interesting summaries of the information collected from all user searches done so far, last updated <b>PROBABLY NEED A DATABASE ENTRY FOR THIS</b>. Search for a subreddit of your own above to refresh our data!</p>
       </div>
     </div> <!-- end main content header row -->
+<?php
+// Connect to database (to run queries during the whole page)
+$dbconn = pg_connect("host=cs437dbinstance.cpa1yidpzcc3.us-east-1.rds.amazonaws.com dbname=thingamajig user=michaelnestler password=testing54321")
+    or die('Could not connect: ' . pg_last_error());
+?>
+
 
     <div class="row bigwidth"> <!-- main content row 1 -->
       <div class='small-4 columns'>
@@ -83,10 +89,6 @@
           <h3><i class='fi-arrow-up'></i><i class='fi-arrow-down'></i>&nbsp;Most trigger-happy subreddits</h3>
           <p>Ooh, shiny buttons!<br>How many people vote on an average post (relative to subscribership).</p>
           <?php
-            // GET TRIGGER HAPPINESS FROM DATABASE! SHOULD NOT OPEN AND CLOSE CONNECTION FOR EVERY DATABASE ACCESS!
-            $dbconn = pg_connect("host=cs437dbinstance.cpa1yidpzcc3.us-east-1.rds.amazonaws.com dbname=thingamajig user=michaelnestler password=testing54321")
-                or die('Could not connect: ' . pg_last_error());
-
             // Performing SQL query
             // multiline strings start with <<<'EOD' and end with EOD;
             $query = <<<'EOD'
@@ -101,23 +103,19 @@
             (
                 select "SubredditName", "Subscribers"
                 from "Subreddits"
-                where "Subscribers" >= 100
+                --where "Subscribers" >= 100
             ) as t2
             order by TriggerHappiness desc
 EOD;
             $result = pg_query($query) or die('Query failed: ' . pg_last_error());
-
-            // print contents of $result (trigger happiness)
             // get as php table
             $table = pg_fetch_all($result);
-            // Free resultset
+            // Free memory
             pg_free_result($result);
-            // Closing connection
-            pg_close($dbconn);
-            ?>
+          ?>
           <ol>
             <?php 
-            for ($i="0"; $i<2; $i=$i+1){
+            for ($i="0"; $i<3; $i=$i+1){
                 echo "<li><a href='result.php?subreddit-input=";
                 echo $table[$i]["SubredditName"];
                 echo "'><strong>";
@@ -127,11 +125,6 @@ EOD;
                 echo "</strong></li>";
             }
             ?>
-          <!--
-            <li><a href='#'><strong>subreddit name</strong></a> with <strong>x.xx</strong> votes per post</li>
-            <li><a href='#'><strong>subreddit name</strong></a> with <strong>x.xx</strong> votes per post</li>
-            <li><a href='#'><strong>subreddit name</strong></a> with <strong>x.xx</strong> votes per post</li>
-          -->
           </ol>
         </div>
       </div>
@@ -139,21 +132,84 @@ EOD;
         <div class='stat-box'>
           <h3><i class='fi-arrow-down'></i><i class='fi-arrow-down'></i>&nbsp;Meanest subreddits</h3>
           <p>If you're looking for a friendly place, this isn't it.<br> Average ratio of downvotes to upvotes per post.</p>
+          <?php
+            // Performing SQL query
+            $query = <<<'EOD'
+            select "SubredditName", Niceness
+            from
+            (
+                select "SubredditName", avg("Upvotes"/"Downvotes") as Niceness
+                from "Submissions"
+                group by "SubredditName"
+            ) as t1
+            natural join
+            (
+                select "SubredditName"
+                from "Subreddits"
+                --where "Subscribers" >= 100
+            ) as t2
+            order by Niceness asc
+EOD;
+            $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
+            // get as php table
+            $table = pg_fetch_all($result);
+            // Free memory
+            pg_free_result($result); 
+          ?>
           <ol>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-          </ol>
+          <?php 
+            for ($i="0"; $i<3; $i=$i+1){
+                echo "<li><a href='result.php?subreddit-input=";
+                echo $table[$i]["SubredditName"];
+                echo "'><strong>";
+                echo $table[$i]["SubredditName"];
+                echo "</strong></a> with a ratio of <strong>";
+                echo round($table[$i]["Niceness"],2);
+                echo "</strong></li>";
+            }
+          ?></ol>
         </div>
       </div>
       <div class='small-4 columns'>
         <div class='stat-box'>
           <h3><i class='fi-heart'></i>&nbsp;Nicest subreddits</h3>
           <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
+          <?php
+            // Performing SQL query
+            $query = <<<'EOD'
+            select "SubredditName", Niceness
+            from
+            (
+                select "SubredditName", avg("Upvotes"/"Downvotes") as Niceness
+                from "Submissions"
+                group by "SubredditName"
+            ) as t1
+            natural join
+            (
+                select "SubredditName"
+                from "Subreddits"
+                --where "Subscribers" >= 100
+            ) as t2
+            order by Niceness desc
+EOD;
+            $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
+            // get as php table
+            $table = pg_fetch_all($result);
+            // Free memory
+            pg_free_result($result);
+          ?>
           <ol>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
+          <?php 
+            for ($i="0"; $i<3; $i=$i+1){
+                echo "<li><a href='result.php?subreddit-input=";
+                echo $table[$i]["SubredditName"];
+                echo "'><strong>";
+                echo $table[$i]["SubredditName"];
+                echo "</strong></a> with a ratio of <strong>";
+                echo round($table[$i]["Niceness"],2);
+                echo "</strong></li>";
+            }
+          ?>
           </ol>
         </div>
       </div>
@@ -164,10 +220,45 @@ EOD;
         <div class='stat-box'>
           <h3><i class='fi-volume'></i>&nbsp;Most enthusiastic subreddits</h3>
           <p>THESE PEOPLE USE A LOT OF CAPS AND PUNCTUATION?!?!!<br> Ratio of UPPERCASE and ?! to lowercase.</p>
+          <?php
+            // Performing SQL query
+            $query = <<<'EOD'
+            select "SubredditName", AvgEnthusiasmScore
+            (
+                select "SubredditName", avg(EnthusiasmScore) as AvgEnthusiasmScore
+                from 
+                (
+                    select "Comments"."EnthusiasmScore" as "EnthusiasmScore", "Submissions"."SubredditName" as "SubredditName"
+                    from "Comments" join "Submissions" using "SubmissionID"
+                ) as t3
+                group by "SubredditName"
+            ) as t1
+            natural join
+            (
+                select "SubredditName"
+                from "Subreddits"
+                --where "Subscribers" >= 100
+            ) as t2
+            order by AvgEnthusiasmScore desc
+EOD;
+            $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
+            // get as php table
+            $table = pg_fetch_all($result);
+            // Free memory
+            pg_free_result($result);
+          ?>
           <ol>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
+          <?php 
+            for ($i="0"; $i<3; $i=$i+1){
+                echo "<li><a href='result.php?subreddit-input=";
+                echo $table[$i]["SubredditName"];
+                echo "'><strong>";
+                echo $table[$i]["SubredditName"];
+                echo "</strong></a> with a ratio of <strong>";
+                echo round($table[$i]["AvgEnthusiasmScore"],2);
+                echo "</strong></li>";
+            }
+          ?>
           </ol>
         </div>
       </div>
@@ -175,13 +266,49 @@ EOD;
         <div class='stat-box'>
           <h3><i class='fi-comment-minus'></i>&nbsp;Most profane subreddits</h3>
           <p>#@$^$*#&!<br> Profanity as a percentage of all words in comments.</p>
+          <?php
+            // Performing SQL query
+            $query = <<<'EOD'
+            select "SubredditName", AvgProfanityScore
+            (
+                select "SubredditName", avg(ProfanityScore) as AvgProfanityScore
+                from 
+                (
+                    select "Comments"."ProfanityScore" as "ProfanityScore", "Submissions"."SubredditName" as "SubredditName"
+                    from "Comments" join "Submissions" using "SubmissionID"
+                ) as t3
+                group by "SubredditName"
+            ) as t1
+            natural join
+            (
+                select "SubredditName"
+                from "Subreddits"
+                --where "Subscribers" >= 100
+            ) as t2
+            order by AvgProfanityScore desc
+EOD;
+            $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
+            // get as php table
+            $table = pg_fetch_all($result);
+            // Free memory
+            pg_free_result($result);
+          ?>
           <ol>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
+          <?php 
+            for ($i="0"; $i<3; $i=$i+1){
+                echo "<li><a href='result.php?subreddit-input=";
+                echo $table[$i]["SubredditName"];
+                echo "'><strong>";
+                echo $table[$i]["SubredditName"];
+                echo "</strong></a> with a ratio of <strong>";
+                echo round($table[$i]["AvgProfanityScore"],2);
+                echo "</strong></li>";
+            }
+          ?>
           </ol>
         </div>
       </div>
+      <!--
       <div class='small-4 columns'>
         <div class='stat-box'>
           <h3><i class='fi-heart'></i>&nbsp;Most verbose??? subreddits</h3>
@@ -193,7 +320,7 @@ EOD;
           </ol>
         </div>
       </div>
-    </div> <!-- end main content row 2 -->
+    </div> --> <!-- end main content row 2 -->
 
     <div class="row bigwidth"> <!-- main content row 3 -->
      <div class="small-4 columns">
@@ -225,7 +352,7 @@ EOD;
               </div>
 
               <div class='large-6 columns' id='credits'>
-                <p>krysjez is <a href='http://jessicayang.org'>Jessica Yang</a>; versere is Kevin Liu; augusthex is <a href='http://michaelnestler.com'>Michael Nestler</a>.</p>
+                <p>krysjez is <a href='http://jessicayang.org'>Jessica Yang</a>; versere is Kevin Liu; augusthex is <a href='http://www.michaelnestler.com'>Michael Nestler</a>.</p>
               </div>
  
             </div>
@@ -257,3 +384,7 @@ EOD;
     </script>
   </body>
 </html>
+<?php
+// Close database connection (probably superfluous)
+pg_close($dbconn);
+?>
