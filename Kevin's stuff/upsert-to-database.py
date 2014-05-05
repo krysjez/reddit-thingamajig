@@ -39,9 +39,9 @@ redditor = r.get_redditor("versere")
 upsert_to_users(redditor.name, redditor.link_karma, redditor.comment_karma, redditor.created_utc)
 
 def upsert_to_comments(commentid, permalink, submissionid, upvotes, downvotes, commenttext, timesubmitted, enthusiasmscore, profanityscore):
-	sqlstr1 = "update public.\"Comments\" set \"Permalink\" = '"+permalink+"', \"SubmissionID\" = '"+submissionid+"', \"Upvotes\" = "+str(upvotes)+", \"Downvotes\" = "+str(downvotes)+", \"CommentText\" = '"+commenttext+"', \"TimeSubmitted\" = to_timestamp("+str(timesubmitted)+"), \"TimeRecorded\" = (select now()), \"EnthusiasmScore\" = "+str(enthusiasmscore)+", \"ProfanityScore\" = "+str(profanityscore)+" where \"CommentID\" = '"+commentid+"';"
+	sqlstr1 = "update public.\"Comments\" set \"Permalink\" = '"+permalink+"', \"SubmissionID\" = '"+submissionid+"', \"Upvotes\" = "+str(upvotes)+", \"Downvotes\" = "+str(downvotes)+", \"CommentText\" = '"+commenttext+"', \"TimeSubmitted\" = to_timestamp("+str(timesubmitted)+"), \"TimeRecorded\" = (select now()) where \"CommentID\" = '"+commentid+"';"
 	cursor.execute(sqlstr1)
-	sqlstr2 = "insert into public.\"Comments\" (\"CommentID\", \"Permalink\", \"SubmissionID\", \"Upvotes\", \"Downvotes\", \"CommentText\", \"TimeSubmitted\", \"TimeRecorded\", \"EnthusiasmScore\", \"ProfanityScore\") select '"+commentid+"', '"+permalink+"', '"+submissionid+"', "+str(upvotes)+", "+str(downvotes)+", '"+commenttext+"', to_timestamp("+str(timesubmitted)+"), now(), "+str(enthusiasmscore)+", "+str(profanityscore)+" where not exists (select 1 from public.\"Comments\" where \"CommentID\" = '"+commentid+"');"
+	sqlstr2 = "insert into public.\"Comments\" (\"CommentID\", \"Permalink\", \"SubmissionID\", \"Upvotes\", \"Downvotes\", \"CommentText\", \"TimeSubmitted\", \"TimeRecorded\") select '"+commentid+"', '"+permalink+"', '"+submissionid+"', "+str(upvotes)+", "+str(downvotes)+", '"+commenttext+"', to_timestamp("+str(timesubmitted)+"), now() where not exists (select 1 from public.\"Comments\" where \"CommentID\" = '"+commentid+"');"
 	cursor.execute(sqlstr2)
 	
 submission = r.get_submission(submission_id='21oxk0')
@@ -60,10 +60,10 @@ subreddit = submission.subreddit
 upsert_to_subreddits(subreddit.display_name, subreddit.subscribers)
 
 
-def upsert_to_submissions(submissionid, permalink, upvotes, downvotes, title, linkto, selftext, timesubmitted, subredditname):
-	sqlstr1 = "update public.\"Submissions\" set \"Permalink\" = '"+permalink+"', \"Upvotes\" = "+str(upvotes)+", \"Downvotes\" = "+str(downvotes)+", \"Title\" = '"+title+"', \"LinkTo\" = '"+linkto+"', \"SelfText\" = '"+selftext+"', \"TimeSubmitted\" = to_timestamp("+str(timesubmitted)+"), \"SubredditName\" = '"+subredditname+"', \"TimeRecorded\" = (select now()) where \"SubmissionID\" = '"+submissionid+"';"
+def upsert_to_submissions(submissionid, permalink, upvotes, downvotes, title, linkto, selftext, timesubmitted, subredditname, enthusiasmscore, profanityscore):
+	sqlstr1 = "update public.\"Submissions\" set \"Permalink\" = '"+permalink+"', \"Upvotes\" = "+str(upvotes)+", \"Downvotes\" = "+str(downvotes)+", \"Title\" = '"+title+"', \"LinkTo\" = '"+linkto+"', \"SelfText\" = '"+selftext+"', \"TimeSubmitted\" = to_timestamp("+str(timesubmitted)+"), \"SubredditName\" = '"+subredditname+"', \"TimeRecorded\" = (select now()), \"EnthusiasmScore\" = "+str(enthusiasmscore)+", \"ProfanityScore\" = "+str(profanityscore)+" where \"SubmissionID\" = '"+submissionid+"';"
 	cursor.execute(sqlstr1)
-	sqlstr2 = "insert into public.\"Submissions\" (\"SubmissionID\", \"Permalink\", \"Upvotes\", \"Downvotes\", \"Title\", \"LinkTo\", \"SelfText\", \"TimeSubmitted\", \"SubredditName\", \"TimeRecorded\") select '"+submissionid+"', '"+permalink+"', "+str(upvotes)+", "+str(downvotes)+", '"+title+"', '"+linkto+"', '"+selftext+"', to_timestamp("+str(timesubmitted)+"), '"+subredditname+"', now() where not exists (select 1 from public.\"Submissions\" where \"SubmissionID\" = '"+submissionid+"');"
+	sqlstr2 = "insert into public.\"Submissions\" (\"SubmissionID\", \"Permalink\", \"Upvotes\", \"Downvotes\", \"Title\", \"LinkTo\", \"SelfText\", \"TimeSubmitted\", \"SubredditName\", \"TimeRecorded\", \"EnthusiasmScore\", \"ProfanityScore\") select '"+submissionid+"', '"+permalink+"', "+str(upvotes)+", "+str(downvotes)+", '"+title+"', '"+linkto+"', '"+selftext+"', to_timestamp("+str(timesubmitted)+"), '"+subredditname+"', now(), "+str(enthusiasmscore)+", "+str(profanityscore)+" where not exists (select 1 from public.\"Submissions\" where \"SubmissionID\" = '"+submissionid+"');"
 	cursor.execute(sqlstr2)
 
 
