@@ -38,10 +38,10 @@ def upsert_to_users(username, linkkarma, commentkarma, timejoined):
 redditor = r.get_redditor("versere")
 upsert_to_users(redditor.name, redditor.link_karma, redditor.comment_karma, redditor.created_utc)
 
-def upsert_to_comments(commentid, permalink, submissionid, upvotes, downvotes, commenttext, timesubmitted):
-	sqlstr1 = "update public.\"Comments\" set \"Permalink\" = '"+permalink+"', \"SubmissionID\" = '"+submissionid+"', \"Upvotes\" = "+str(upvotes)+", \"Downvotes\" = "+str(downvotes)+", \"CommentText\" = '"+commenttext+"', \"TimeSubmitted\" = to_timestamp("+str(timesubmitted)+"), \"TimeRecorded\" = (select now()) where \"CommentID\" = '"+commentid+"';"
+def upsert_to_comments(commentid, permalink, submissionid, upvotes, downvotes, commenttext, timesubmitted, enthusiasmscore, profanityscore):
+	sqlstr1 = "update public.\"Comments\" set \"Permalink\" = '"+permalink+"', \"SubmissionID\" = '"+submissionid+"', \"Upvotes\" = "+str(upvotes)+", \"Downvotes\" = "+str(downvotes)+", \"CommentText\" = '"+commenttext+"', \"TimeSubmitted\" = to_timestamp("+str(timesubmitted)+"), \"TimeRecorded\" = (select now()), \"EnthusiasmScore\" = "+str(enthusiasmscore)+", \"ProfanityScore\" = "+str(profanityscore)+" where \"CommentID\" = '"+commentid+"';"
 	cursor.execute(sqlstr1)
-	sqlstr2 = "insert into public.\"Comments\" (\"CommentID\", \"Permalink\", \"SubmissionID\", \"Upvotes\", \"Downvotes\", \"CommentText\", \"TimeSubmitted\", \"TimeRecorded\") select '"+commentid+"', '"+permalink+"', '"+submissionid+"', "+str(upvotes)+", "+str(downvotes)+", '"+commenttext+"', to_timestamp("+str(timesubmitted)+"), now() where not exists (select 1 from public.\"Comments\" where \"CommentID\" = '"+commentid+"');"
+	sqlstr2 = "insert into public.\"Comments\" (\"CommentID\", \"Permalink\", \"SubmissionID\", \"Upvotes\", \"Downvotes\", \"CommentText\", \"TimeSubmitted\", \"TimeRecorded\", \"EnthusiasmScore\", \"ProfanityScore\") select '"+commentid+"', '"+permalink+"', '"+submissionid+"', "+str(upvotes)+", "+str(downvotes)+", '"+commenttext+"', to_timestamp("+str(timesubmitted)+"), now(), "+str(enthusiasmscore)+", "+str(profanityscore)+" where not exists (select 1 from public.\"Comments\" where \"CommentID\" = '"+commentid+"');"
 	cursor.execute(sqlstr2)
 	
 submission = r.get_submission(submission_id='21oxk0')
