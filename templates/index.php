@@ -81,7 +81,7 @@
       <div class='small-4 columns'>
         <div class='stat-box'>
           <h3><i class='fi-arrow-up'></i><i class='fi-arrow-down'></i>&nbsp;Most trigger-happy subreddits</h3>
-          <p>Ooh, shiny buttons!<br>How many subscribers vote on an average post.</p>
+          <p>Ooh, shiny buttons!<br>How many people vote on an average post (relative to subscribership).</p>
           <?php
             // GET TRIGGER HAPPINESS FROM DATABASE! SHOULD NOT OPEN AND CLOSE CONNECTION FOR EVERY DATABASE ACCESS!
             $dbconn = pg_connect("host=cs437dbinstance.cpa1yidpzcc3.us-east-1.rds.amazonaws.com dbname=thingamajig user=michaelnestler password=testing54321")
