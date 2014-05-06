@@ -59,6 +59,11 @@ def insert_to_user_commented(username, commentid):
 	
 def insert_to_user_moderates(username, subredditname):
 	cursor.execute("insert into public.\"User_moderates\" (\"Username\", \"SubredditName\") select %s, %s where not exists (select 1 from public.\"User_moderates\" where \"Username\" = %s and \"SubredditName\" = %s);", (str(username), subredditname, str(username), subredditname))
+	
+def cleanvote(vote):
+	if (vote < 0):
+		return 0
+	return vote
 
 # Attributes for table Subreddits
 upsert_to_subreddits(subreddit.display_name, subreddit.subscribers)
@@ -68,7 +73,7 @@ badWords = ['ass', 'asshole', 'arsehole', 'bastard', 'bitch', 'clusterfuck', 'co
 
 # Attributes for table Submissions
 for submission in subreddit.get_new(limit=MAX_SUBMISSIONS):
-	upsert_to_submissions(submission.id, submission.permalink, submission.ups, submission.downs, submission.title, submission.url, submission.selftext, submission.created_utc, subreddit.display_name)
+	upsert_to_submissions(submission.id, submission.permalink, cleanvote(submission.ups), cleanvote(submission.downs), submission.title, submission.url, submission.selftext, submission.created_utc, subreddit.display_name)
 	# User who posted the submission
 	user = r.get_redditor(submission.author)
 	upsert_to_users(user.name, user.link_karma, user.comment_karma, user.created_utc)
@@ -94,8 +99,7 @@ for submission in subreddit.get_new(limit=MAX_SUBMISSIONS):
 				badWordCount+=1
 			wordCount+=1
 		ProfanityScore = (badWordCount+1)/float(wordCount+1)
-		upsert_to_comments(comment.id, comment.permalink, comment._submission.id, comment.ups, comment.downs, comment.body, comment.created_utc, EnthusiasmScore, ProfanityScore)
-		upsert_to_comments(comment.id, comment.permalink, comment._submission.id, comment.ups, comment.downs, comment.body, comment.created_utc, EnthusiasmScore, ProfanityScore)
+		upsert_to_comments(comment.id, comment.permalink, comment._submission.id, cleanvote(comment.ups), cleanvote(comment.downs), comment.body, comment.created_utc, EnthusiasmScore, ProfanityScore)
 		# User who posted the comment
 		user = r.get_redditor(comment.author)
 		upsert_to_users(user.name, user.link_karma, user.comment_karma, user.created_utc)
