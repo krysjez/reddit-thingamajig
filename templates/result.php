@@ -93,9 +93,9 @@
           <img src='http://i.imgur.com/4VrgVJ5.jpg'>
           <p class='caption'>by /u/cartoonheroes</p>
       </div> <!-- end left side -->
-      <div class='small-8 columns'> <!-- right side -->
-        <div class='row'> <!-- sub row 1 -->
-          <div class='small-6 columns'>
+<!--      <div class='small-8 columns'> <!-- right side -->
+<!--        <div class='row'> <!-- sub row 1 -->
+<!--          <div class='small-6 columns'>
             <div class='stat-box'>
               <h3><i class='fi-heart'></i>&nbsp;Users with best karma</h3>
               <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
@@ -118,8 +118,8 @@
             </div>
           </div>
         </div> <!-- end sdub row 1 -->
-        <div class='row'> <!-- sub row 2 -->
-          <div class='small-6 columns'>
+<!--        <div class='row'> <!-- sub row 2 -->
+<!--          <div class='small-6 columns'>
             <div class='stat-box'>
               <h3><i class='fi-heart'></i>&nbsp;Most profane users</h3>
               <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>

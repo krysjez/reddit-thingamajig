@@ -45,7 +45,7 @@
       <div class="row">   <!-- Jumbo Header -->
         <div class="small-6 small-centered columns jumbo">
           <h1>Get insights on your<br> favorite* subreddits</h1>
-          <h3>Enter a subreddit name below and we'll find out what their and did those feet in ancient time walk upon England's mountains green.</h3>
+          <h3>Enter a subreddit name below and we'll tell you how it measures up.</h3>
         </div>
       </div>    <!-- End Jumbo Header -->
 
@@ -73,7 +73,7 @@
  
     <div class='row'> <!-- main content header row -->
       <div class="small-12 columns">
-        <p>Here are some interesting summaries of the information collected from all user searches done so far, last updated <b>PROBABLY NEED A DATABASE ENTRY FOR THIS</b>. Search for a subreddit of your own above to refresh our data!</p>
+        <p>Here are some interesting summaries of the information collected so far.</p>
       </div>
     </div> <!-- end main content header row -->
 <?php
@@ -94,10 +94,10 @@ $dbconn = pg_connect("host=cs437dbinstance.cpa1yidpzcc3.us-east-1.rds.amazonaws.
             $query = <<<'EOD'
 --Most trigger-happy subreddits
 --This will give the top subreddits based on the average total votes per post, normalized by the number of subscribers. We normalize by the number of subscribers because otherwise, we'll simply get the most active subreddits, like r/worldnews and r/politics. Also, we cut off subreddits that are too small, with fewer than 100 subscribers. 
-select "SubredditName", AvgVotes / ("Subscribers"+1) as TriggerHappiness
+select "SubredditName", "AvgVotes" / ("Subscribers"+1) as "TriggerHappiness"
 from
 (
-	select "SubredditName", avg("Upvotes"+"Downvotes") as AvgVotes
+	select "SubredditName", avg("Upvotes"+"Downvotes") as "AvgVotes"
 	from "Submissions"
 	group by "SubredditName"
 ) as t1
@@ -107,7 +107,7 @@ natural join
 	from "Subreddits"
 	where "Subscribers" >= 100
 ) as t2
-order by TriggerHappiness desc
+order by "TriggerHappiness" desc
 EOD;
             $result = pg_query($query) or die('Query failed: ' . pg_last_error());
             // get as php table
@@ -123,7 +123,7 @@ EOD;
                 echo "'><strong>";
                 echo $table[$i]["SubredditName"];
                 echo "</strong></a> with trigger happiness index <strong>";
-                echo round($table[$i]["triggerhappiness"]*10000,2);
+                echo round($table[$i]["TriggerHappiness"]*10000,2);
                 echo "</strong></li>";
             }
             ?>
@@ -133,16 +133,16 @@ EOD;
       <div class='small-4 columns'>
         <div class='stat-box'>
           <h3><i class='fi-arrow-down'></i><i class='fi-arrow-down'></i>&nbsp;Meanest subreddits</h3>
-          <p>If you're looking for a friendly place, this isn't it.<br> Average ratio of downvotes to upvotes per post.</p>
+          <p>If you're looking for a friendly place, this isn't it.<br> Percentage of votes that are upvotes.</p>
           <?php
             // Performing SQL query
             $query = <<<'EOD'
 --Meanest subreddits
---Subreddits with the lowest average ratio of upvotes to downvotes in its submissions. Same query as the "Niceness" measure, just flip the order.
-select "SubredditName", Niceness
+--Subreddits with the lowest average percentage of upvotes in its submissions. Same query as the "Niceness" measure, just flip the order.
+select "SubredditName", "Niceness"
 from
 (
-	select "SubredditName", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as Niceness
+	select "SubredditName", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "Niceness"
 	from "Submissions"
 	group by "SubredditName"
 ) as t1
@@ -152,7 +152,7 @@ natural join
 	from "Subreddits"
 	where "Subscribers" >= 100
 ) as t2
-order by Niceness asc
+order by "Niceness" asc
 EOD;
             $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
             // get as php table
@@ -168,7 +168,7 @@ EOD;
                 echo "'><strong>";
                 echo $table[$i]["SubredditName"];
                 echo "</strong></a> with a ratio of <strong>";
-                echo round($table[$i]["niceness"],2);
+                echo round($table[$i]["Niceness"],2);
                 echo "</strong></li>";
             }
           ?></ol>
@@ -177,16 +177,16 @@ EOD;
       <div class='small-4 columns'>
         <div class='stat-box'>
           <h3><i class='fi-heart'></i>&nbsp;Nicest subreddits</h3>
-          <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
+          <p>So much orange!<br> Percent of votes that are upvotes (smallest values).</p>
           <?php
             // Performing SQL query
             $query = <<<'EOD'
 --Nicest subreddits
---Subreddits with highest average ratio of upvotes to downvotes in its submissions
-select "SubredditName", Niceness
+--Subreddits with highest average percentage of upvotes in its submissions
+select "SubredditName", "Niceness"
 from
 (
-	select "SubredditName", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as Niceness
+	select "SubredditName", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "Niceness"
 	from "Submissions"
 	group by "SubredditName"
 ) as t1
@@ -196,7 +196,7 @@ natural join
 	from "Subreddits"
 	where "Subscribers" >= 100
 ) as t2
-order by Niceness desc
+order by "Niceness" desc
 EOD;
             $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
             // get as php table
@@ -212,7 +212,7 @@ EOD;
                 echo "'><strong>";
                 echo $table[$i]["SubredditName"];
                 echo "</strong></a> with a ratio of <strong>";
-                echo round($table[$i]["niceness"],2);
+                echo round($table[$i]["Niceness"],2);
                 echo "</strong></li>";
             }
           ?>
@@ -225,16 +225,16 @@ EOD;
       <div class='small-4 columns'>
         <div class='stat-box'>
           <h3><i class='fi-volume'></i>&nbsp;Most enthusiastic subreddits</h3>
-          <p>THESE PEOPLE USE A LOT OF CAPS AND PUNCTUATION?!?!!<br> Ratio of UPPERCASE and ?! to lowercase.</p>
+          <p>THESE PEOPLE USE A LOT OF CAPS AND PUNCTUATION?!?!!<br> Ratio of UPPERCASE and ?! to lowercase. [IS THE DESCRIPTION CORRECT?]</p>
           <?php
             // Performing SQL query
             $query = <<<'EOD'
 --Most enthusiastic subreddits
 --Gives subreddits that use a lot of uppercase characters and exclamation marks
-select "SubredditName", AvgEnthusiasmScore
+select "SubredditName", "AvgEnthusiasmScore"
 from
 (
-	select "SubredditName", avg(EnthusiasmScore) as AvgEnthusiasmScore
+	select "SubredditName", avg("EnthusiasmScore") as "AvgEnthusiasmScore"
 	from 
 	(
 		select "Comments"."EnthusiasmScore" as "EnthusiasmScore", "Submissions"."SubredditName" as "SubredditName"
@@ -248,7 +248,7 @@ natural join
 	from "Subreddits"
 	where "Subscribers" >= 100
 ) as t2
-order by AvgEnthusiasmScore desc
+order by "AvgEnthusiasmScore" desc
 EOD;
             $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
             // get as php table
@@ -274,16 +274,16 @@ EOD;
       <div class='small-4 columns'>
         <div class='stat-box'>
           <h3><i class='fi-comment-minus'></i>&nbsp;Most profane subreddits</h3>
-          <p>#@$^$*#&!<br> Profanity as a percentage of all words in comments.</p>
+          <p>#@$^$*#&!<br> Profanity as a percentage of all words in comments. [THIS DESCRIPTION MUST NOT BE CORRECT]</p>
           <?php
             // Performing SQL query
             $query = <<<'EOD'
 --Most profane subreddits
 --Gives the subreddits with the highest average profanity score in the submissions. Each submission has a profanity score, which is calculated from its comments. Also, cut off subreddits with fewer than 100 subscribers.
-select "SubredditName", AvgProfanityScore
+select "SubredditName", "AvgProfanityScore"
 from
 (
-	select "SubredditName", avg(ProfanityScore) as AvgProfanityScore
+	select "SubredditName", avg("ProfanityScore") as "AvgProfanityScore"
 	from 
 	(
 		select "Comments"."ProfanityScore" as "ProfanityScore", "Submissions"."SubredditName" as "SubredditName"
@@ -297,7 +297,7 @@ natural join
 	from "Subreddits"
 	where "Subscribers" >= 100
 ) as t2
-order by AvgProfanityScore desc
+order by "AvgProfanityScore" desc
 EOD;
             $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
             // get as php table
@@ -332,10 +332,296 @@ EOD;
           </ol>
         </div>
       </div>
-    </div> --> <!-- end main content row 2 -->
+    </div> -->
+      <div class='small-4 columns'>
+        <div class='stat-box'>
+          <h3><i class='fi-comment-minus'></i>&nbsp;Most profane <strong>users</strong></h3>
+          <p>#@$^$*#&!<br> based on their comments.</p>
+          <?php
+            // Performing SQL query
+            $query = <<<'EOD'
+--Most profane users, based on their comments. Only users with at least 10 comments are considered. 
+select "Username", "AvgProfanityScore"
+from
+(
+	select "Username", avg("ProfanityScore") as "AvgProfanityScore"
+	from ("Users" natural join "User_commented") join "Comments" using ("CommentID")
+	group by "Username"
+) as t1
+natural join
+(
+	select "Username"
+	from
+	(
+		select "Username", count(*) as "CommentCount" 
+		from "User_commented" 
+		group by "Username"
+	) as asdf
+	where "CommentCount" >= 10
+) as t2
+order by "AvgProfanityScore" desc
+EOD;
+            $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
+            // get as php table
+            $table = pg_fetch_all($result);
+            // Free memory
+            pg_free_result($result);
+          ?>
+          <ol>
+          <?php 
+            for ($i="0"; $i<3; $i=$i+1){
+                echo "<li><strong>";
+                echo $table[$i]["Username"];
+                echo "</strong> with a score of <strong>";
+                echo round($table[$i]["AvgProfanityScore"],2);
+                echo "</strong></li>";
+            }
+          ?>
+          </ol>
+        </div>
+      </div>
+      <div class='small-4 columns'>
+        <div class='stat-box'>
+          <h3><i class='fi-volume'></i>&nbsp;Most enthusiastic <strong>users</strong></h3>
+          <p><br> based on their comments.</p>
+          <?php
+            // Performing SQL query
+            $query = <<<'EOD'
+--Most enthusiastic users, based on their comments. Only users with at least 10 comments are included.
+select "Username", "AvgEnthusiasmScore"
+from
+(
+	select "Username", avg("EnthusiasmScore") as "AvgEnthusiasmScore"
+	from ("Users" natural join "User_commented") join "Comments" using ("CommentID")
+	group by "Username"
+) as t1
+natural join
+(
+	select "Username"
+	from
+	(
+		select "Username", count(*) as "CommentCount" 
+		from "User_commented" 
+		group by "Username"
+	) as asdf
+	where "CommentCount" >= 10
+) as t2
+order by "AvgEnthusiasmScore" desc
+EOD;
+            $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
+            // get as php table
+            $table = pg_fetch_all($result);
+            // Free memory
+            pg_free_result($result);
+          ?>
+          <ol>
+          <?php 
+            for ($i="0"; $i<3; $i=$i+1){
+                echo "<li><strong>";
+                echo $table[$i]["Username"];
+                echo "</strong> with a score of <strong>";
+                echo round($table[$i]["AvgEnthusiasmScore"],2);
+                echo "</strong></li>";
+            }
+          ?>
+          </ol>
+        </div>
+      </div>
+      <div class='small-4 columns'>
+        <div class='stat-box'>
+          <h3>&nbsp;Most highly voted <strong>users</strong></h3>
+          <p><br> based on their submissions.</p>
+          <?php
+            // Performing SQL query
+            $query = <<<'EOD'
+--Most highly voted users, based on their submissions. These are the users with the highest average percentage of upvotes in their submissions. Only users with at least 5 submissions are considered.
+select "Username", "UserSubmissionPopularity"
+from
+(
+	select "Username", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "UserSubmissionPopularity"
+	from ("Users" natural join "User_submitted") join "Submissions" using ("SubmissionID")
+	group by "Username"
+) as t1
+natural join
+(
+	select "Username"
+	from
+	(
+		select "Username", count(*) as "SubmissionCount" 
+		from "User_submitted" 
+		group by "Username"
+	) as asdf
+	where "SubmissionCount" >= 5
+) as t2
+order by "UserSubmissionPopularity" desc
+EOD;
+            $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
+            // get as php table
+            $table = pg_fetch_all($result);
+            // Free memory
+            pg_free_result($result);
+          ?>
+          <ol>
+          <?php 
+            for ($i="0"; $i<3; $i=$i+1){
+                echo "<li><strong>";
+                echo $table[$i]["Username"];
+                echo "</strong> with a score of <strong>";
+                echo round($table[$i]["UserSubmissionPopularity"],2);
+                echo "</strong></li>";
+            }
+          ?>
+          </ol>
+        </div>
+      </div>
+      <div class='small-4 columns'>
+        <div class='stat-box'>
+          <h3>&nbsp;Least highly voted <strong>users</strong></h3>
+          <p><br> based on their submissions.</p>
+          <?php
+            // Performing SQL query
+            $query = <<<'EOD'
+--Least highly voted users, based on submissions. Only users with at least 5 submissions are considered.
+select "Username", "UserSubmissionPopularity"
+from
+(
+	select "Username", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "UserSubmissionPopularity"
+	from ("Users" natural join "User_submitted") join "Submissions" using ("SubmissionID")
+	group by "Username"
+) as t1
+natural join
+(
+	select "Username"
+	from
+	(
+		select "Username", count(*) as "SubmissionCount" 
+		from "User_submitted" 
+		group by "Username"
+	) as asdf
+	where "SubmissionCount" >= 5
+) as t2
+order by "UserSubmissionPopularity" asc
+EOD;
+            $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
+            // get as php table
+            $table = pg_fetch_all($result);
+            // Free memory
+            pg_free_result($result);
+          ?>
+          <ol>
+          <?php 
+            for ($i="0"; $i<3; $i=$i+1){
+                echo "<li><strong>";
+                echo $table[$i]["Username"];
+                echo "</strong> with a score of <strong>";
+                echo round($table[$i]["UserSubmissionPopularity"],2);
+                echo "</strong></li>";
+            }
+          ?>
+          </ol>
+        </div>
+      </div>
+
+      <div class='small-4 columns'>
+        <div class='stat-box'>
+          <h3>&nbsp;Highly voted commenters.</h3>
+          <p><br>The redditors with the highest average upvote percentage, based on their comments.</p>
+          <?php
+            // Performing SQL query
+            $query = <<<'EOD'
+--Highly voted commenters. The redditors with the highest average upvote percentage, based on their comments. Only users with at least 10 comments are considered. 
+select "Username", "UserPopularity"
+from
+(
+	select "Username", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "UserPopularity"
+	from ("Users" natural join "User_commented") join "Comments" using ("CommentID")
+	group by "Username"
+) as t1
+natural join
+(
+	select "Username"
+	from
+	(
+		select "Username", count(*) as "CommentCount" 
+		from "User_commented" 
+		group by "Username"
+	) as asdf
+	where "CommentCount" >= 10
+) as t2
+order by "UserPopularity" desc
+EOD;
+            $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
+            // get as php table
+            $table = pg_fetch_all($result);
+            // Free memory
+            pg_free_result($result);
+          ?>
+          <ol>
+          <?php 
+            for ($i="0"; $i<3; $i=$i+1){
+                echo "<li><strong>";
+                echo $table[$i]["Username"];
+                echo "</strong> with a score of <strong>";
+                echo round($table[$i]["UserPopularity"],2);
+                echo "</strong></li>";
+            }
+          ?>
+          </ol>
+        </div>
+      </div>
+      
+      <div class='small-4 columns'>
+        <div class='stat-box'>
+          <h3>&nbsp;Least highly voted commenters.</h3>
+          <p><br>The redditors with the lowest average upvote percentage, based on their comments.</p>
+          <?php
+            // Performing SQL query
+            $query = <<<'EOD'
+--Least highly voted commenters. Only users with at least 10 comments are considered. 
+select "Username", "UserPopularity"
+from
+(
+	select "Username", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "UserPopularity"
+	from ("Users" natural join "User_commented") join "Comments" using ("CommentID")
+	group by "Username"
+) as t1
+natural join
+(
+	select "Username"
+	from
+	(
+		select "Username", count(*) as "CommentCount" 
+		from "User_commented" 
+		group by "Username"
+	) as asdf
+	where "CommentCount" >= 10
+) as t2
+order by "UserPopularity" asc
+EOD;
+            $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
+            // get as php table
+            $table = pg_fetch_all($result);
+            // Free memory
+            pg_free_result($result);
+          ?>
+          <ol>
+          <?php 
+            for ($i="0"; $i<3; $i=$i+1){
+                echo "<li><strong>";
+                echo $table[$i]["Username"];
+                echo "</strong> with a score of <strong>";
+                echo round($table[$i]["UserPopularity"],2);
+                echo "</strong></li>";
+            }
+          ?>
+          </ol>
+        </div>
+      </div>
+      
+    <!-- end main content row 2 -->
 
     <div class="row bigwidth"> <!-- main content row 3 -->
-     <div class="small-4 columns">
+<!--     <div class="small-4 columns">
       <div class="stat-box">
         <h3>Average comments-to-votes ratio or something, something nice to show in a chart</h3>
         Insert a chart here
@@ -346,6 +632,7 @@ EOD;
         <h3>Go ahead and give it a try!</h3>
         <p>Here is some copy to make it sound more impressive than it actually is. I guess describe it too.</p>
       </div>
+-->
     </div> <!-- end main content row 3 -->
 
 
