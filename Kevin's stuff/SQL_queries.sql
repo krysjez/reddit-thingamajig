@@ -236,3 +236,7 @@ natural join
 	where "CommentCount" >= 10
 ) as t2
 order by "UserPopularity" asc
+
+-----------------------------------------------------------------
+--If a user asks for a specific subreddit
+-----------------------------------------------------------------

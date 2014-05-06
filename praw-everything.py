@@ -76,8 +76,9 @@ for submission in subreddit.get_new(limit=MAX_SUBMISSIONS):
 	upsert_to_submissions(submission.id, submission.permalink, cleanvote(submission.ups), cleanvote(submission.downs), submission.title, submission.url, submission.selftext, submission.created_utc, subreddit.display_name)
 	# User who posted the submission
 	user = r.get_redditor(submission.author)
-	upsert_to_users(user.name, user.link_karma, user.comment_karma, user.created_utc)
-	insert_to_user_submitted(user.name, submission.id) # Create user_submitted entry
+	if not (str(user.name) == 'None'):
+		upsert_to_users(user.name, user.link_karma, user.comment_karma, user.created_utc)
+		insert_to_user_submitted(user.name, submission.id) # Create user_submitted entry
 	enthu = 0
 	lower = 0
 	# Attributes for table Comments
@@ -102,8 +103,9 @@ for submission in subreddit.get_new(limit=MAX_SUBMISSIONS):
 		upsert_to_comments(comment.id, comment.permalink, comment._submission.id, cleanvote(comment.ups), cleanvote(comment.downs), comment.body, comment.created_utc, EnthusiasmScore, ProfanityScore)
 		# User who posted the comment
 		user = r.get_redditor(comment.author)
-		upsert_to_users(user.name, user.link_karma, user.comment_karma, user.created_utc)
-		insert_to_user_commented(user.name, comment.id) # Create user_commented entry
+		if not (str(user.name) == 'None'):
+			upsert_to_users(user.name, user.link_karma, user.comment_karma, user.created_utc)
+			insert_to_user_commented(user.name, comment.id) # Create user_commented entry
 
 cursor.close()
 conn.close()
