@@ -1,6 +1,15 @@
 <!doctype html>
 <html class="no-js" lang="en">
   <head>
+<?php
+// If we don't have any data on that page
+//FIXME
+if ($_GET["subreddit-input"] == "russia") {
+echo "<meta http-equiv='refresh' content='0; url=nodata.php?subreddit-input=";
+echo $_GET["subreddit-input"];
+echo "' />";
+}
+?>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reddit Thingamajig | Numbers!</title>
@@ -59,35 +68,71 @@
       </div> <!-- end search bar -->
       </div>
     </div> <!-- end fullwidth row -->
- 
+<?php
+// TODO SET VARIABLES ACCORDING TO REALITY
+$niceness = "0.5";
+//$comments = "10";
+$enthusiasm = "1.3";
+$avgniceness = "0.6";
+//$avgcomments = "15";
+$avgenthusiasm = "0.7";
+$profanity = "0.1";
+$avgprofanity = "0.05";
+?>
     <div class='row'> <!-- main content jumbo row -->
       <div class="small-4 columns">
-        <h1>it's negative</h1>
-        (dynamic descriptor based on ratio; can do with jquery)
+        <h1>it's 
+        <?php
+            if ($niceness < $avgniceness) {
+                echo "negative";
+            } else {
+                echo "positive";
+            }
+        ?>
+        </h1>
         <p>
+        <?php
+        if ($niceness < $avgniceness) {
+            echo "<span class='huge downvote'>";
+        } else {
+            echo "<span class='huge upvote'>";
+        }
+        echo $niceness*100;
+        echo "</span>";
+        ?> percent upvotes
+        <!--
           <span class='huge upvote'>3 <i class='fi-arrow-up'></i></span>
           <span class='huge downvote'>18 <i class='fi-arrow-down'></i></span>
+          -->
         </p>
-        <p>average on other subreddits: xx.x</p>
+        <p>average on other subreddits: <?php echo $avgniceness*100; ?></p>
+      </div>
+      <!-- I don't think we ever calculated this
+      <div class="small-4 columns">
+        <h1>it's <?php if($comments>$avgcomments){echo "vocal";}else{echo "quiet";} ?></h1>
+        <p>
+          <span class='huge upvote'><?php echo $comments; ?> <i class='fi-comment'></i></span> comments per post
+        </p>
+        <p>average on other subreddits: <?php echo $avgcomments; ?></p>
+      </div> -->
+      <div class="small-4 columns">
+        <h1>it's <?php if($enthusiasm>$avgenthusiasm){echo " ...'enthusiastic'";}else{echo "civil";} ?></h1>
+        <p>
+          <span class='huge'><?php echo $enthusiasm; ?> <i class='fi-comment'></i></span> ratio of CAPS to lowercase
+        </p>
+        <p>average on other subreddits: <?php echo $avgenthusiasm; ?></p>
       </div>
       <div class="small-4 columns">
-        <h1>it's vocal</h1>
+        <h1>it's <?php if($profanity>$avgprofanity){echo "profane";}else{echo "decent";} ?></h1>
         <p>
-          <span class='huge upvote'>3 <i class='fi-comment'></i></span> comments per post
+          <span class='huge'><?php echo $profanity; ?> <i class='fi-comment'></i></span> profanity score
         </p>
-        <p>average on other subreddits: xx.x</p>
-      </div>
-      <div class="small-4 columns">
-        <h1>it's quiet</h1>
-        <p>
-          <span class='huge upvote'>3 <i class='fi-comment'></i></span> CAPS to lowercase
-        </p>
-        <p>average on other subreddits: xx.x</p>
+        <p>average on other subreddits: <?php echo $avgprofanity; ?></p>
       </div>
     </div> <!-- end main content jumbo row -->
 
-    <div class="row bigwidth"> <!-- main content row -->
-      <div class='small-4 columns'>
+<!--    <div class="row bigwidth"> <!-- main content row -->
+<!--      <div class='small-4 columns'>
           <h2>What this means</h2>
           <p>Wasdklfjasdkfjafjad</p>
           <img src='http://i.imgur.com/4VrgVJ5.jpg'>
@@ -142,11 +187,11 @@
             </div>
           </div>
         </div> <!-- end sub row 2 -->
-      </div> <!-- end right side -->
-    </div> <!-- end main content row 1 -->
+<!--      </div> <!-- end right side -->
+<!--    </div> <!-- end main content row 1 -->
 
-    <div class="row"> <!-- main content row 2 -->
-      <div class='small-12 columns'>
+<!--    <div class="row"> <!-- main content row 2 -->
+<!--      <div class='small-12 columns'>
         <div class='stat-box'>
           <h3>Tips for moderators</h3>
           <p>LOOK AT THIS INCREDIBLE VIDEO!!!<br> Ratio of UPPERCASE and punctuation to lowercase.</p>
