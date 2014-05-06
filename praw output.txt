@@ -1,0 +1,191 @@
+ubuntu@ip-172-31-34-57:/var/www/html$ python3 praw-125.py
+^CTraceback (most recent call last):
+  File "/usr/local/lib/python3.4/dist-packages/requests/packages/urllib3/connectionpool.py", line 313, in _make_request
+    httplib_response = conn.getresponse(buffering=True)
+TypeError: getresponse() got an unexpected keyword argument 'buffering'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "praw-125.py", line 97, in <module>
+    flat_comments = praw.helpers.flatten_tree(submission.comments)
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 921, in comments
+    comments_only=True)
+  File "/usr/local/lib/python3.4/dist-packages/praw/decorators.py", line 323, in wrapped
+    return function(cls, *args, **kwargs)
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 847, in from_url
+    s_info, c_info = reddit_session.request_json(url, params=params)
+  File "/usr/local/lib/python3.4/dist-packages/praw/decorators.py", line 161, in wrapped
+    return_value = function(reddit_session, *args, **kwargs)
+  File "/usr/local/lib/python3.4/dist-packages/praw/__init__.py", line 499, in request_json
+    response = self._request(url, params, data)
+  File "/usr/local/lib/python3.4/dist-packages/praw/__init__.py", line 371, in _request
+    response = handle_redirect()
+  File "/usr/local/lib/python3.4/dist-packages/praw/__init__.py", line 344, in handle_redirect
+    timeout=timeout, **kwargs)
+  File "/usr/local/lib/python3.4/dist-packages/praw/handlers.py", line 135, in wrapped
+    result = function(cls, **kwargs)
+  File "/usr/local/lib/python3.4/dist-packages/praw/handlers.py", line 54, in wrapped
+    return function(cls, **kwargs)
+  File "/usr/local/lib/python3.4/dist-packages/praw/handlers.py", line 90, in request
+    allow_redirects=False)
+  File "/usr/local/lib/python3.4/dist-packages/requests/sessions.py", line 486, in send
+    r = adapter.send(request, **kwargs)
+  File "/usr/local/lib/python3.4/dist-packages/requests/adapters.py", line 330, in send
+    timeout=timeout
+  File "/usr/local/lib/python3.4/dist-packages/requests/packages/urllib3/connectionpool.py", line 480, in urlopen
+    body=body, headers=headers)
+  File "/usr/local/lib/python3.4/dist-packages/requests/packages/urllib3/connectionpool.py", line 315, in _make_request
+    httplib_response = conn.getresponse()
+  File "/usr/lib/python3.4/http/client.py", line 1147, in getresponse
+    response.begin()
+  File "/usr/lib/python3.4/http/client.py", line 351, in begin
+    version, status, reason = self._read_status()
+  File "/usr/lib/python3.4/http/client.py", line 313, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/usr/lib/python3.4/socket.py", line 371, in readinto
+    return self._sock.recv_into(b)
+KeyboardInterrupt
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47174), raddr=('54.208.239.30', 5432)>
+/usr/lib/python3.4/importlib/_bootstrap.py:2127: ImportWarning: sys.meta_path is empty
+ubuntu@ip-172-31-34-57:/var/www/html$
+ubuntu@ip-172-31-34-57:/var/www/html$
+ubuntu@ip-172-31-34-57:/var/www/html$
+ubuntu@ip-172-31-34-57:/var/www/html$
+ubuntu@ip-172-31-34-57:/var/www/html$ python3 praw-125.py
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47176), raddr=('54.208.239.30', 5432)>
+  self._sock = None
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47178), raddr=('54.208.239.30', 5432)>
+  self._sock = None
+/usr/local/lib/python3.4/dist-packages/requests/models.py:632: ResourceWarning: unclosed <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.31.34.57', 45071), raddr=('23.3.105.48', 80)>
+  gen = generate()
+Traceback (most recent call last):
+  File "praw-125.py", line 114, in <module>
+    upsert_to_comments(comment.id, comment.permalink, comment._submission.id, comment.ups, comment.downs, comment.body, comment.created_utc, EnthusiasmScore, ProfanityScore)
+  File "praw-125.py", line 25, in upsert_to_comments
+    cursor.execute("insert into public.\"Comments\" (\"CommentID\", \"Permalink\", \"SubmissionID\", \"Upvotes\", \"Downvotes\", \"CommentText\", \"TimeSubmitted\", \"TimeRecorded\", \"EnthusiasmScore\", \"ProfanityScore\") select %s, %s, %s, %s, %s, %s, to_timestamp(%s), now(), %s, %s where not exists (select 1 from public.\"Comments\" where \"CommentID\" = %s);", (commentid, permalink, submissionid, upvotes, downvotes, commenttext, timesubmitted, enthusiasmscore, profanityscore, commentid))
+  File "/usr/local/lib/python3.4/dist-packages/pg8000/core.py", line 522, in execute
+    self._stmt.execute(args, stream=stream)
+  File "/usr/local/lib/python3.4/dist-packages/pg8000/core.py", line 2053, in execute
+    self.c.bind(self, self.make_args(values))
+  File "/usr/local/lib/python3.4/dist-packages/pg8000/core.py", line 1553, in bind
+    self.handle_messages(ps)
+  File "/usr/local/lib/python3.4/dist-packages/pg8000/core.py", line 1642, in handle_messages
+    raise error
+  File "/usr/local/lib/python3.4/dist-packages/pg8000/core.py", line 1631, in handle_messages
+    self.message_types[message_code](self._read(data_len - 4), ps)
+  File "/usr/local/lib/python3.4/dist-packages/pg8000/core.py", line 1193, in handle_ERROR_RESPONSE
+    msg_dict[RESPONSE_MSG])
+pg8000.errors.ProgrammingError: (b'ERROR', b'23514', b'new row for relation "Comments" violates check constraint "NonnegativeDownvotes"')
+sys:1: ResourceWarning: unclosed <socket.socket fd=5, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.31.34.57', 45069), raddr=('23.3.105.48', 80)>
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47180), raddr=('54.208.239.30', 5432)>
+/usr/lib/python3.4/importlib/_bootstrap.py:2127: ImportWarning: sys.meta_path is empty
+sys:1: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.31.34.57', 59857), raddr=('23.59.189.81', 80)>
+ubuntu@ip-172-31-34-57:/var/www/html$ nano praw-125.py
+ubuntu@ip-172-31-34-57:/var/www/html$ nano praw-125.py
+ubuntu@ip-172-31-34-57:/var/www/html$ python3 praw-125.py
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47182), raddr=('54.208.239.30', 5432)>
+  self._sock = None
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47184), raddr=('54.208.239.30', 5432)>
+  self._sock = None
+Traceback (most recent call last):
+  File "praw-125.py", line 90, in <module>
+    user = r.get_redditor(submission.author)
+  File "/usr/local/lib/python3.4/dist-packages/praw/__init__.py", line 867, in get_redditor
+    return objects.Redditor(self, user_name, *args, **kwargs)
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 652, in __init__
+    fetch, info_url)
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 71, in __init__
+    self.has_fetched = self._populate(json_dict, fetch)
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 126, in _populate
+    json_dict = self._get_json_dict() if fetch else {}
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 119, in _get_json_dict
+    as_objects=False)
+  File "/usr/local/lib/python3.4/dist-packages/praw/decorators.py", line 161, in wrapped
+    return_value = function(reddit_session, *args, **kwargs)
+  File "/usr/local/lib/python3.4/dist-packages/praw/__init__.py", line 499, in request_json
+    response = self._request(url, params, data)
+  File "/usr/local/lib/python3.4/dist-packages/praw/__init__.py", line 372, in _request
+    _raise_response_exceptions(response)
+  File "/usr/local/lib/python3.4/dist-packages/praw/internal.py", line 173, in _raise_response_exceptions
+    response.raise_for_status()
+  File "/usr/local/lib/python3.4/dist-packages/requests/models.py", line 773, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found
+sys:1: ResourceWarning: unclosed <socket.socket fd=5, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.31.34.57', 59859), raddr=('23.59.189.81', 80)>
+sys:1: ResourceWarning: unclosed <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.31.34.57', 41062), raddr=('23.59.189.83', 80)>
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47187), raddr=('54.208.239.30', 5432)>
+/usr/lib/python3.4/importlib/_bootstrap.py:2127: ImportWarning: sys.meta_path is empty
+sys:1: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.31.34.57', 45080), raddr=('23.3.105.48', 80)>
+ubuntu@ip-172-31-34-57:/var/www/html$ nano praw-125.py
+ubuntu@ip-172-31-34-57:/var/www/html$
+ubuntu@ip-172-31-34-57:/var/www/html$ python3 praw-125.py
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47189), raddr=('54.208.239.30', 5432)>
+  self._sock = None
+Traceback (most recent call last):
+  File "praw-125.py", line 117, in <module>
+    user = r.get_redditor(comment.author)
+  File "/usr/local/lib/python3.4/dist-packages/praw/__init__.py", line 867, in get_redditor
+    return objects.Redditor(self, user_name, *args, **kwargs)
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 652, in __init__
+    fetch, info_url)
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 71, in __init__
+    self.has_fetched = self._populate(json_dict, fetch)
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 126, in _populate
+    json_dict = self._get_json_dict() if fetch else {}
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 119, in _get_json_dict
+    as_objects=False)
+  File "/usr/local/lib/python3.4/dist-packages/praw/decorators.py", line 161, in wrapped
+    return_value = function(reddit_session, *args, **kwargs)
+  File "/usr/local/lib/python3.4/dist-packages/praw/__init__.py", line 499, in request_json
+    response = self._request(url, params, data)
+  File "/usr/local/lib/python3.4/dist-packages/praw/__init__.py", line 372, in _request
+    _raise_response_exceptions(response)
+  File "/usr/local/lib/python3.4/dist-packages/praw/internal.py", line 173, in _raise_response_exceptions
+    response.raise_for_status()
+  File "/usr/local/lib/python3.4/dist-packages/requests/models.py", line 773, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found
+sys:1: ResourceWarning: unclosed <socket.socket fd=5, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.31.34.57', 59866), raddr=('23.59.189.81', 80)>
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47191), raddr=('54.208.239.30', 5432)>
+/usr/lib/python3.4/importlib/_bootstrap.py:2127: ImportWarning: sys.meta_path is empty
+sys:1: ResourceWarning: unclosed <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.31.34.57', 41069), raddr=('23.59.189.83', 80)>
+ubuntu@ip-172-31-34-57:/var/www/html$ nano praw-125.py
+ubuntu@ip-172-31-34-57:/var/www/html$ python3 praw-125.py
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47194), raddr=('54.208.239.30', 5432)>
+  self._sock = None
+Traceback (most recent call last):
+  File "praw-125.py", line 117, in <module>
+    user = r.get_redditor(comment.author)
+  File "/usr/local/lib/python3.4/dist-packages/praw/__init__.py", line 867, in get_redditor
+    return objects.Redditor(self, user_name, *args, **kwargs)
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 652, in __init__
+    fetch, info_url)
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 71, in __init__
+    self.has_fetched = self._populate(json_dict, fetch)
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 126, in _populate
+    json_dict = self._get_json_dict() if fetch else {}
+  File "/usr/local/lib/python3.4/dist-packages/praw/objects.py", line 119, in _get_json_dict
+    as_objects=False)
+  File "/usr/local/lib/python3.4/dist-packages/praw/decorators.py", line 161, in wrapped
+    return_value = function(reddit_session, *args, **kwargs)
+  File "/usr/local/lib/python3.4/dist-packages/praw/__init__.py", line 499, in request_json
+    response = self._request(url, params, data)
+  File "/usr/local/lib/python3.4/dist-packages/praw/__init__.py", line 372, in _request
+    _raise_response_exceptions(response)
+  File "/usr/local/lib/python3.4/dist-packages/praw/internal.py", line 173, in _raise_response_exceptions
+    response.raise_for_status()
+  File "/usr/local/lib/python3.4/dist-packages/requests/models.py", line 773, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found
+sys:1: ResourceWarning: unclosed <socket.socket fd=5, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.31.34.57', 59871), raddr=('23.59.189.81', 80)>
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47198), raddr=('54.208.239.30', 5432)>
+/usr/lib/python3.4/importlib/_bootstrap.py:2127: ImportWarning: sys.meta_path is empty
+sys:1: ResourceWarning: unclosed <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=6, laddr=('172.31.34.57', 40009), raddr=('23.3.105.56', 80)>
+ubuntu@ip-172-31-34-57:/var/www/html$ nano praw-125.py
+ubuntu@ip-172-31-34-57:/var/www/html$ python3 praw-125.py
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47203), raddr=('54.208.239.30', 5432)>
+  self._sock = None
+/usr/lib/python3.4/socket.py:444: ResourceWarning: unclosed <socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('172.31.34.57', 47205), raddr=('54.208.239.30', 5432)>
+  self._sock = None
+
