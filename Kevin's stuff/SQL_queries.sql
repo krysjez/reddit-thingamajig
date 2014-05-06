@@ -237,6 +237,100 @@ natural join
 ) as t2
 order by "UserPopularity" asc
 
+
 -----------------------------------------------------------------
---If a user asks for a specific subreddit
+--If a user asks for a specific subreddit------------------------
 -----------------------------------------------------------------
+
+--Profanity of that subreddit
+select "SubredditName", avg("ProfanityScore") as "AvgProfanityScore"
+from 
+(
+	select "Comments"."ProfanityScore" as "ProfanityScore", "Submissions"."SubredditName" as "SubredditName"
+	from "Comments" join "Submissions" using ("SubmissionID")
+	where "SubredditName" = --INSERT HERE BUT MAKE SURE TO SANITIZE INPUT TO PREVENT INJECTIONS
+) as t3
+group by "SubredditName"
+;
+
+--Enthusiasm of that subreddit
+select "SubredditName", avg("EnthusiasmScore") as "AvgEnthusiasmScore"
+from 
+(
+	select "Comments"."EnthusiasmScore" as "EnthusiasmScore", "Submissions"."SubredditName" as "SubredditName"
+	from "Comments" join "Submissions" using ("SubmissionID")
+	where "SubredditName" = --INSERT HERE BUT MAKE SURE TO SANITIZE INPUT TO PREVENT INJECTIONS
+) as t3
+group by "SubredditName"
+;
+
+--Trigger-happiness of that subreddit
+select "SubredditName", "AvgVotes" / ("Subscribers"+1) as "TriggerHappiness"
+from
+(
+	select "SubredditName", avg("Upvotes"+"Downvotes") as "AvgVotes"
+	from "Submissions"
+	where "SubredditName" = --INSERT HERE BUT MAKE SURE TO SANITIZE INPUT TO PREVENT INJECTIONS
+	group by "SubredditName"
+) as t1
+;
+
+--"Niceness" of upvotes out of total votes
+select "SubredditName", "Niceness"
+from
+(
+	select "SubredditName", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "Niceness"
+	from "Submissions"
+	where "SubredditName" = --INSERT HERE BUT MAKE SURE TO SANITIZE INPUT TO PREVENT INJECTIONS
+	group by "SubredditName"
+) as t1
+;
+
+---------------------------------------------------------------
+--If someone asks about a specific reddit user-----------------
+---------------------------------------------------------------
+
+--User profanity, based on their comments. 
+select "Username", "AvgProfanityScore"
+from
+(
+	select "Username", avg("ProfanityScore") as "AvgProfanityScore"
+	from ("Users" natural join "User_commented") join "Comments" using ("CommentID")
+	where "Username" = --INSERT USERNAME HERE BUT MAKE SURE TO SANITIZE INPUT TO PREVENT INJECTION
+	group by "Username"
+) as t1
+;
+
+--User enthusiasm
+select "Username", "AvgEnthusiasmScore"
+from
+(
+	select "Username", avg("EnthusiasmScore") as "AvgEnthusiasmScore"
+	from ("Users" natural join "User_commented") join "Comments" using ("CommentID")
+	where "Username" = --INSERT USERNAME HERE BUT MAKE SURE TO SANITIZE INPUT TO PREVENT INJECTION
+	group by "Username"
+) as t1
+;
+
+
+--How highly voted a user is, based on their submissions. 
+select "Username", "UserSubmissionPopularity"
+from
+(
+	select "Username", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "UserSubmissionPopularity"
+	from ("Users" natural join "User_submitted") join "Submissions" using ("SubmissionID")
+	where "Username" = --INSERT USERNAME HERE BUT MAKE SURE TO SANITIZE INPUT TO PREVENT INJECTION
+	group by "Username"
+) as t1
+;
+
+--how highly voted a user is, based on their comments
+select "Username", "UserPopularity"
+from
+(
+	select "Username", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "UserPopularity"
+	from ("Users" natural join "User_commented") join "Comments" using ("CommentID")
+	where "Username" = --INSERT USERNAME HERE BUT MAKE SURE TO SANITIZE INPUT TO PREVENT INJECTION
+	group by "Username"
+) as t1
+;
