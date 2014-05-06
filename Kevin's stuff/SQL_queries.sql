@@ -3,7 +3,7 @@
 
 --Most trigger-happy subreddits
 --This will give the top subreddits based on the average total votes per post, normalized by the number of subscribers. We normalize by the number of subscribers because otherwise, we'll simply get the most active subreddits, like r/worldnews and r/politics. Also, we cut off subreddits that are too small, with fewer than 100 subscribers. 
-select "SubredditName", AvgVotes / "Subscribers" as TriggerHappiness
+select "SubredditName", AvgVotes / ("Subscribers"+1) as TriggerHappiness
 from
 (
 	select "SubredditName", avg("Upvotes"+"Downvotes") as AvgVotes
@@ -22,12 +22,13 @@ order by TriggerHappiness desc
 --Most profane subreddits
 --Gives the subreddits with the highest average profanity score in the submissions. Each submission has a profanity score, which is calculated from its comments. Also, cut off subreddits with fewer than 100 subscribers.
 select "SubredditName", AvgProfanityScore
+from
 (
 	select "SubredditName", avg(ProfanityScore) as AvgProfanityScore
 	from 
 	(
 		select "Comments"."ProfanityScore" as "ProfanityScore", "Submissions"."SubredditName" as "SubredditName"
-		from "Comments" join "Submissions" using "SubmissionID"
+		from "Comments" join "Submissions" using ("SubmissionID")
 	) as t3
 	group by "SubredditName"
 ) as t1
@@ -45,12 +46,13 @@ order by AvgProfanityScore desc
 --Most enthusiastic subreddits
 --Gives subreddits that use a lot of uppercase characters and exclamation marks
 select "SubredditName", AvgEnthusiasmScore
+from
 (
 	select "SubredditName", avg(EnthusiasmScore) as AvgEnthusiasmScore
 	from 
 	(
 		select "Comments"."EnthusiasmScore" as "EnthusiasmScore", "Submissions"."SubredditName" as "SubredditName"
-		from "Comments" join "Submissions" using "SubmissionID"
+		from "Comments" join "Submissions" using ("SubmissionID")
 	) as t3
 	group by "SubredditName"
 ) as t1
@@ -68,7 +70,7 @@ order by AvgEnthusiasmScore desc
 select "SubredditName", Niceness
 from
 (
-	select "SubredditName", avg("Upvotes"/"Downvotes") as Niceness
+	select "SubredditName", avg("Upvotes"/("Downvotes"+"Upvotes"+1)) as Niceness
 	from "Submissions"
 	group by "SubredditName"
 ) as t1
@@ -86,7 +88,7 @@ order by Niceness desc
 select "SubredditName", Niceness
 from
 (
-	select "SubredditName", avg("Upvotes"/"Downvotes") as Niceness
+	select "SubredditName", avg("Upvotes"/("Downvotes"+"Upvotes"+1)) as Niceness
 	from "Submissions"
 	group by "SubredditName"
 ) as t1
@@ -100,9 +102,10 @@ order by Niceness asc
 
 --Most profane users, based on their comments. Only users with at least 10 comments are considered. 
 select "Username", AvgProfanityScore
+from
 (
 	select "Username", avg(ProfanityScore) as AvgProfanityScore
-	from ("Users" natural join "User_commented") join "Comments" using "CommentID"
+	from ("Users" natural join "User_commented") join "Comments" using ("CommentID")
 	group by "Username"
 ) as t1
 natural join
@@ -121,9 +124,10 @@ order by AvgProfanityScore desc
 
 --Most enthusiastic users, based on their comments. Only users with at least 
 select "Username", AvgEnthusiasmScore
+from
 (
 	select "Username", avg(EnthusiasmScore) as AvgEnthusiasmScore
-	from ("Users" natural join "User_commented") join "Comments" using "CommentID"
+	from ("Users" natural join "User_commented") join "Comments" using ("CommentID")
 	group by "Username"
 ) as t1
 natural join

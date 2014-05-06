@@ -16,7 +16,7 @@ conn = pg8000.connect(user="michaelnestler", password="testing54321", database="
 conn.autocommit = True
 cursor = conn.cursor()
 
-MAX_SUBMISSIONS = 50 # Limit for how many recent submissions to look at
+MAX_SUBMISSIONS = 500 # Limit for how many recent submissions to look at
 MAX_COMMENTS = 500
 # Check reddit messages later to see if /r/redditdev replied
 
