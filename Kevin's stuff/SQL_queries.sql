@@ -66,7 +66,7 @@ order by "AvgEnthusiasmScore" desc
 ;
 
 --Nicest subreddits
---Subreddits with highest average ratio of upvotes to downvotes in its submissions
+--Subreddits with highest average percentage of upvotes in its submissions
 select "SubredditName", "Niceness"
 from
 (
@@ -84,7 +84,7 @@ order by "Niceness" desc
 ;
 
 --Meanest subreddits
---Subreddits with the lowest average ratio of upvotes to downvotes in its submissions. Same query as the "Niceness" measure, just flip the order.
+--Subreddits with the lowest average percentage of upvotes in its submissions. Same query as the "Niceness" measure, just flip the order.
 select "SubredditName", "Niceness"
 from
 (
@@ -99,6 +99,12 @@ natural join
 	where "Subscribers" >= 100
 ) as t2
 order by "Niceness" asc
+
+
+------------------------------------------------------------------------
+--SQL queries specific to users, rather than subreddits-----------------
+------------------------------------------------------------------------
+
 
 --Most profane users, based on their comments. Only users with at least 10 comments are considered. 
 select "Username", "AvgProfanityScore"
@@ -122,11 +128,11 @@ natural join
 order by "AvgProfanityScore" desc
 ;
 
---Most enthusiastic users, based on their comments. Only users with at least 
+--Most enthusiastic users, based on their comments. Only users with at least 10 comments are included.
 select "Username", "AvgEnthusiasmScore"
 from
 (
-	select "Username", avg("EnthusiasmScore") as AvgEnthusiasmScore
+	select "Username", avg("EnthusiasmScore") as "AvgEnthusiasmScore"
 	from ("Users" natural join "User_commented") join "Comments" using ("CommentID")
 	group by "Username"
 ) as t1
@@ -143,3 +149,90 @@ natural join
 ) as t2
 order by "AvgEnthusiasmScore" desc
 ;
+
+--Most highly voted users, based on their submissions. These are the users with the highest average percentage of upvotes in their submissions. Only users with at least 5 submissions are considered.
+select "Username", "UserSubmissionPopularity"
+from
+(
+	select "Username", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "UserSubmissionPopularity"
+	from ("Users" natural join "User_submitted") join "Submissions" using ("SubmissionID")
+	group by "Username"
+) as t1
+natural join
+(
+	select "Username"
+	from
+	(
+		select "Username", count(*) as "SubmissionCount" 
+		from "User_submitted" 
+		group by "Username"
+	)
+	where "SubmissionCount" >= 5
+) as t2
+order by "UserSubmissionPopularity" desc
+;
+
+--Least highly voted users, based on submissions. Only users with at least 5 submissions are considered.
+select "Username", "UserSubmissionPopularity"
+from
+(
+	select "Username", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "UserSubmissionPopularity"
+	from ("Users" natural join "User_submitted") join "Submissions" using ("SubmissionID")
+	group by "Username"
+) as t1
+natural join
+(
+	select "Username"
+	from
+	(
+		select "Username", count(*) as "SubmissionCount" 
+		from "User_submitted" 
+		group by "Username"
+	)
+	where "SubmissionCount" >= 5
+) as t2
+order by "UserSubmissionPopularity" asc
+;
+
+--Highly voted commenters. The redditors with the highest average upvote percentage, based on their comments. Only users with at least 10 comments are considered. 
+select "Username", "UserPopularity"
+from
+(
+	select "Username", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "UserPopularity"
+	from ("Users" natural join "User_commented") join "Comments" using ("CommentID")
+	group by "Username"
+) as t1
+natural join
+(
+	select "Username"
+	from
+	(
+		select "Username", count(*) as "CommentCount" 
+		from "User_commented" 
+		group by "Username"
+	)
+	where "CommentCount" >= 10
+) as t2
+order by "UserPopularity" desc
+;
+
+--Least highly voted commenters. Only users with at least 10 comments are considered. 
+select "Username", "UserPopularity"
+from
+(
+	select "Username", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "UserPopularity"
+	from ("Users" natural join "User_commented") join "Comments" using ("CommentID")
+	group by "Username"
+) as t1
+natural join
+(
+	select "Username"
+	from
+	(
+		select "Username", count(*) as "CommentCount" 
+		from "User_commented" 
+		group by "Username"
+	)
+	where "CommentCount" >= 10
+) as t2
+order by "UserPopularity" asc
