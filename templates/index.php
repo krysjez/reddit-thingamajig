@@ -133,7 +133,7 @@ EOD;
       <div class='small-4 columns'>
         <div class='stat-box'>
           <h3><i class='fi-arrow-down'></i><i class='fi-arrow-down'></i>&nbsp;Meanest subreddits</h3>
-          <p>If you're looking for a friendly place, this isn't it.<br> Percentage of votes that are upvotes.</p>
+          <p>If you're looking for a friendly place, this isn't it.<br> Percentage of votes that are upvotes (smallest values).</p>
           <?php
             // Performing SQL query
             $query = <<<'EOD'
@@ -177,7 +177,7 @@ EOD;
       <div class='small-4 columns'>
         <div class='stat-box'>
           <h3><i class='fi-heart'></i>&nbsp;Nicest subreddits</h3>
-          <p>So much orange!<br> Percent of votes that are upvotes (smallest values).</p>
+          <p>So much orange!<br> Percent of votes that are upvotes.</p>
           <?php
             // Performing SQL query
             $query = <<<'EOD'
