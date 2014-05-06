@@ -92,20 +92,22 @@ $dbconn = pg_connect("host=cs437dbinstance.cpa1yidpzcc3.us-east-1.rds.amazonaws.
             // Performing SQL query
             // multiline strings start with <<<'EOD' and end with EOD;
             $query = <<<'EOD'
-            select "SubredditName", AvgVotes / "Subscribers" as TriggerHappiness
-            from
-            (
-                select "SubredditName", avg("Upvotes"+"Downvotes") as AvgVotes
-                from "Submissions"
-                group by "SubredditName"
-            ) as t1
-            natural join
-            (
-                select "SubredditName", "Subscribers"
-                from "Subreddits"
-                --where "Subscribers" >= 100
-            ) as t2
-            order by TriggerHappiness desc
+--Most trigger-happy subreddits
+--This will give the top subreddits based on the average total votes per post, normalized by the number of subscribers. We normalize by the number of subscribers because otherwise, we'll simply get the most active subreddits, like r/worldnews and r/politics. Also, we cut off subreddits that are too small, with fewer than 100 subscribers. 
+select "SubredditName", AvgVotes / ("Subscribers"+1) as TriggerHappiness
+from
+(
+	select "SubredditName", avg("Upvotes"+"Downvotes") as AvgVotes
+	from "Submissions"
+	group by "SubredditName"
+) as t1
+natural join
+(
+	select "SubredditName", "Subscribers"
+	from "Subreddits"
+	where "Subscribers" >= 100
+) as t2
+order by TriggerHappiness desc
 EOD;
             $result = pg_query($query) or die('Query failed: ' . pg_last_error());
             // get as php table
@@ -135,20 +137,22 @@ EOD;
           <?php
             // Performing SQL query
             $query = <<<'EOD'
-            select "SubredditName", Niceness
-            from
-            (
-                select "SubredditName", avg("Upvotes"/"Downvotes") as Niceness
-                from "Submissions"
-                group by "SubredditName"
-            ) as t1
-            natural join
-            (
-                select "SubredditName"
-                from "Subreddits"
-                --where "Subscribers" >= 100
-            ) as t2
-            order by Niceness asc
+--Meanest subreddits
+--Subreddits with the lowest average ratio of upvotes to downvotes in its submissions. Same query as the "Niceness" measure, just flip the order.
+select "SubredditName", Niceness
+from
+(
+	select "SubredditName", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as Niceness
+	from "Submissions"
+	group by "SubredditName"
+) as t1
+natural join
+(
+	select "SubredditName"
+	from "Subreddits"
+	where "Subscribers" >= 100
+) as t2
+order by Niceness asc
 EOD;
             $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
             // get as php table
@@ -164,7 +168,7 @@ EOD;
                 echo "'><strong>";
                 echo $table[$i]["SubredditName"];
                 echo "</strong></a> with a ratio of <strong>";
-                echo round($table[$i]["Niceness"],2);
+                echo round($table[$i]["niceness"],2);
                 echo "</strong></li>";
             }
           ?></ol>
@@ -177,20 +181,22 @@ EOD;
           <?php
             // Performing SQL query
             $query = <<<'EOD'
-            select "SubredditName", Niceness
-            from
-            (
-                select "SubredditName", avg("Upvotes"/"Downvotes") as Niceness
-                from "Submissions"
-                group by "SubredditName"
-            ) as t1
-            natural join
-            (
-                select "SubredditName"
-                from "Subreddits"
-                --where "Subscribers" >= 100
-            ) as t2
-            order by Niceness desc
+--Nicest subreddits
+--Subreddits with highest average ratio of upvotes to downvotes in its submissions
+select "SubredditName", Niceness
+from
+(
+	select "SubredditName", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as Niceness
+	from "Submissions"
+	group by "SubredditName"
+) as t1
+natural join
+(
+	select "SubredditName"
+	from "Subreddits"
+	where "Subscribers" >= 100
+) as t2
+order by Niceness desc
 EOD;
             $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
             // get as php table
@@ -206,7 +212,7 @@ EOD;
                 echo "'><strong>";
                 echo $table[$i]["SubredditName"];
                 echo "</strong></a> with a ratio of <strong>";
-                echo round($table[$i]["Niceness"],2);
+                echo round($table[$i]["niceness"],2);
                 echo "</strong></li>";
             }
           ?>
@@ -223,23 +229,26 @@ EOD;
           <?php
             // Performing SQL query
             $query = <<<'EOD'
-            select "SubredditName", AvgEnthusiasmScore
-            (
-                select "SubredditName", avg(EnthusiasmScore) as AvgEnthusiasmScore
-                from 
-                (
-                    select "Comments"."EnthusiasmScore" as "EnthusiasmScore", "Submissions"."SubredditName" as "SubredditName"
-                    from "Comments" join "Submissions" using "SubmissionID"
-                ) as t3
-                group by "SubredditName"
-            ) as t1
-            natural join
-            (
-                select "SubredditName"
-                from "Subreddits"
-                --where "Subscribers" >= 100
-            ) as t2
-            order by AvgEnthusiasmScore desc
+--Most enthusiastic subreddits
+--Gives subreddits that use a lot of uppercase characters and exclamation marks
+select "SubredditName", AvgEnthusiasmScore
+from
+(
+	select "SubredditName", avg(EnthusiasmScore) as AvgEnthusiasmScore
+	from 
+	(
+		select "Comments"."EnthusiasmScore" as "EnthusiasmScore", "Submissions"."SubredditName" as "SubredditName"
+		from "Comments" join "Submissions" using ("SubmissionID")
+	) as t3
+	group by "SubredditName"
+) as t1
+natural join
+(
+	select "SubredditName"
+	from "Subreddits"
+	where "Subscribers" >= 100
+) as t2
+order by AvgEnthusiasmScore desc
 EOD;
             $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
             // get as php table
@@ -269,23 +278,26 @@ EOD;
           <?php
             // Performing SQL query
             $query = <<<'EOD'
-            select "SubredditName", AvgProfanityScore
-            (
-                select "SubredditName", avg(ProfanityScore) as AvgProfanityScore
-                from 
-                (
-                    select "Comments"."ProfanityScore" as "ProfanityScore", "Submissions"."SubredditName" as "SubredditName"
-                    from "Comments" join "Submissions" using "SubmissionID"
-                ) as t3
-                group by "SubredditName"
-            ) as t1
-            natural join
-            (
-                select "SubredditName"
-                from "Subreddits"
-                --where "Subscribers" >= 100
-            ) as t2
-            order by AvgProfanityScore desc
+--Most profane subreddits
+--Gives the subreddits with the highest average profanity score in the submissions. Each submission has a profanity score, which is calculated from its comments. Also, cut off subreddits with fewer than 100 subscribers.
+select "SubredditName", AvgProfanityScore
+from
+(
+	select "SubredditName", avg(ProfanityScore) as AvgProfanityScore
+	from 
+	(
+		select "Comments"."ProfanityScore" as "ProfanityScore", "Submissions"."SubredditName" as "SubredditName"
+		from "Comments" join "Submissions" using ("SubmissionID")
+	) as t3
+	group by "SubredditName"
+) as t1
+natural join
+(
+	select "SubredditName"
+	from "Subreddits"
+	where "Subscribers" >= 100
+) as t2
+order by AvgProfanityScore desc
 EOD;
             $result = pg_query($query);// or die('Query failed: ' . pg_last_error());
             // get as php table
