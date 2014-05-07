@@ -97,7 +97,6 @@ for topred in topreddits:
 				wordCount+=1
 			ProfanityScore = (badWordCount)/float(wordCount+1)
 			upsert_to_comments(comment.id, comment.permalink, comment._submission.id, comment.ups, comment.downs, comment.body, comment.created_utc, EnthusiasmScore, ProfanityScore)
-			upsert_to_comments(comment.id, comment.permalink, comment._submission.id, comment.ups, comment.downs, comment.body, comment.created_utc, EnthusiasmScore, ProfanityScore)
 			# User who posted the comment
 			user = r.get_redditor(comment.author)
 			if not (str(user.name) == 'None'):
