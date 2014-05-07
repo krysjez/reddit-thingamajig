@@ -97,7 +97,7 @@ for submission in subreddit.get_new(limit=MAX_SUBMISSIONS):
 		enthu = CommentText.count('?') + CommentText.count('!') + sum(x.isupper() for x in CommentText)
 		lower = sum(x.islower() for x in CommentText)
 		EnthusiasmScore = (enthu+1)/float(lower+1)
-		for w in re.findall(r"\w+", CommentText):
+		for w in re.findall(r"\w+", CommentText.lower()):
 			if w in badWords:
 				badWordCount+=1
 			wordCount+=1
