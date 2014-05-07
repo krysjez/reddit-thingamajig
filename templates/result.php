@@ -86,8 +86,8 @@ from
 EOD;
 $avgenthresult = pg_query($avgenthquery) or die ('Query failed: ' . pg_last_error());
 $avgenthtable = pg_fetch_all($avgenthresult);
-pg_free_result($avgenthresult)
-$avgenthusiasm = $avgenthtable[0]["AvgAvgEnthusiasmScore"]
+pg_free_result($avgenthresult);
+$avgenthusiasm = $avgenthtable[0]["AvgAvgEnthusiasmScore"];
 
 // Per-subreddit queries
 
@@ -128,8 +128,14 @@ from
   where "SubredditName" = '
 EOD;
 $triggerqueryend = <<<'EOD'
-'group by "SubredditName"
+'
+  group by "SubredditName"
 ) as t1
+natural join
+(
+  select "SubredditName", "Subscribers"
+  from "Subreddits"
+) as t2
 EOD;
 $triggerquery = $triggerquerybegin . $sanitized . $triggerqueryend;
 $triggerresult = pg_query($triggerquery) or die('Query failed:' . pg_last_error());
@@ -236,14 +242,14 @@ $niceness = $nicenesstable[0]["Niceness"];
       </div> <!-- end search bar -->
       </div>
     </div> <!-- end fullwidth row -->
-    <div class='row'> <!-- main content jumbo row -->
+    <div class='row bigwidth'> <!-- main content jumbo row -->
        <div class="large-3 columns">
         <h2>it's 
         <?php
             if ($trigger < $avgtrigger) {
-                echo "negative";
+                echo "stingy";
             } else {
-                echo "positive";
+                echo "trigger-happy";
             }
         ?>
         </h2>
@@ -254,11 +260,11 @@ $niceness = $nicenesstable[0]["Niceness"];
         } else {
             echo "<span class='huge upvote'>";
         }
-        echo round($niceness*100,2);
-        echo "% up</span>";
+        echo round($trigger*10000,2);
+        echo "</span><br>trigger-happiness index";
         ?>
         </p>
-        <p class='center'>average on other subreddits: <strong><?php echo round($avgniceness*100,2); ?>%</strong></p>
+        <p class='center'>average on other subreddits: <strong><?php echo round($avgniceness*100,2); ?></strong></p>
       </div>
 
       <div class="large-3 columns">
@@ -279,7 +285,7 @@ $niceness = $nicenesstable[0]["Niceness"];
             echo "<span class='huge upvote'>";
         }
         echo round($niceness*100,2);
-        echo "% up</span>";
+        echo "% </span><br>upvotes";
         ?>
         </p>
         <p class='center'>average on other subreddits: <strong><?php echo round($avgniceness*100,2); ?>%</strong></p>
@@ -288,88 +294,35 @@ $niceness = $nicenesstable[0]["Niceness"];
       <div class="large-3 columns">
         <h2>it's <?php if($enthusiasm>$avgenthusiasm){echo " ...'enthusiastic'";}else{echo "civil";} ?></h2>
         <p>
-          <span class='huge'><?php echo round($enthusiasm,4); ?> <i class='fi-comment'></i></span>
-          <br>enthusiasm index
+            <?php
+        if ($enthusiasm > $avgenthusiasm) {
+            echo "<span class='huge downvote'>";
+        } else {
+            echo "<span class='huge upvote'>";
+        }
+        echo round($enthusiasm,4);
+        echo "</span><br>enthusiasm index";
+        ?>
+      </p>
         </p>
-        <p>average on other subreddits: <strong><?php echo round($avgenthusiasm*100,2); ?>%</strong></p>
+        <p>average on other subreddits: <strong><?php echo round($avgenthusiasm,2); ?></strong></p>
       </div>
       <div class="large-3 columns">
         <h2>it's <?php if($profanity>$avgprofanity){echo "profane";}else{echo "decent";} ?></h2>
         <p>
-          <span class='huge'><?php echo round($profanity,4); ?> <i class='fi-comment'></i></span> profanity score
-        </p>
+            <?php
+        if ($profanity > $avgprofanity) {
+            echo "<span class='huge downvote'>";
+        } else {
+            echo "<span class='huge upvote'>";
+        }
+        echo round($profanity*100,2);
+        echo "%</span><br>profanity";
+        ?>
+      </p>
         <p>average on other subreddits: <strong><?php echo round($avgprofanity*100,2); ?>%</strong></p>
       </div>
     </div> <!-- end main content jumbo row -->
-
-<!--    <div class="row bigwidth"> <!-- main content row -->
-<!--      <div class='large-4 columns'>
-          <h2>What this means</h2>
-          <p>Wasdklfjasdkfjafjad</p>
-          <img src='http://i.imgur.com/4VrgVJ5.jpg'>
-          <p class='caption'>by /u/cartoonheroes</p>
-      </div> <!-- end left side -->
-<!--      <div class='large-8 columns'> <!-- right side -->
-<!--        <div class='row'> <!-- sub row 1 -->
-<!--          <div class='large-6 columns'>
-            <div class='stat-box'>
-              <h3><i class='fi-heart'></i>&nbsp;Users with best karma</h3>
-              <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
-              <ol>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong>/<li>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-              </ol>
-            </div>
-          </div>
-          <div class='large-6 columns'>
-            <div class='stat-box'>
-              <h3><i class='fi-torsos-all'></i>&nbsp;Most active users</h3>
-              <p>These people comment a lot.</p>
-              <ol>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-              </ol>
-            </div>
-          </div>
-        </div> <!-- end sdub row 1 -->
-<!--        <div class='row'> <!-- sub row 2 -->
-<!--          <div class='large-6 columns'>
-            <div class='stat-box'>
-              <h3><i class='fi-heart'></i>&nbsp;Most profane users</h3>
-              <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
-              <ol>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-              </ol>
-            </div>
-          </div>
-          <div class='large-6 columns'>
-            <div class='stat-box'>
-              <h3><i class='fi-heart'></i>&nbsp;Most ??? subreddits</h3>
-              <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
-              <ol>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-                <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-              </ol>
-            </div>
-          </div>
-        </div> <!-- end sub row 2 -->
-<!--      </div> <!-- end right side -->
-<!--    </div> <!-- end main content row 1 -->
-
-<!--    <div class="row"> <!-- main content row 2 -->
-<!--      <div class='large-12 columns'>
-        <div class='stat-box'>
-          <h3>Tips for moderators</h3>
-          <p>LOOK AT THIS INCREDIBLE VIDEO!!!<br> Ratio of UPPERCASE and punctuation to lowercase.</p>
-      </div>
-    </div>
-    </div> <!-- end main content row 2 -->
-
 
     <!-- End Content -->
  
@@ -379,7 +332,6 @@ $niceness = $nicenesstable[0]["Niceness"];
       <footer class="row">
         <hr> 
           <div class="large-8 large-12 columns">
-              <p>* or most hated. /r/___, I'm looking at you.</p>
               <p>Made for Introduction to Database Systems, CPSC 473 Spring 2014, Yale University</p>
           </div>
       </footer>
