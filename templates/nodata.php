@@ -1,7 +1,55 @@
-
 <!doctype html>
 <html class="no-js" lang="en">
   <head>
+<?php
+// Check to make sure we indeed don't have any data for requested sub. If we do, it's probably because they hit refresh and we already started praw-everything.py for them. Redirect to result.php?subreddit-input=...
+
+// COPYPASTED FROM result.php
+$sanitized = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET["subreddit-input"]);
+//$sanitized = "russia";
+// Connect to database (to run queries during the whole page)
+$dbconn = pg_connect("host=cs437dbinstance.cpa1yidpzcc3.us-east-1.rds.amazonaws.com dbname=thingamajig user=michaelnestler password=testing54321")
+    or die('Could not connect: ' . pg_last_error());
+$profanityquerybegin = <<<'EOD'
+select "SubredditName", avg("ProfanityScore") as "AvgProfanityScore"
+from 
+(
+	select "Comments"."ProfanityScore" as "ProfanityScore", "Submissions"."SubredditName" as "SubredditName"
+	from "Comments" join "Submissions" using ("SubmissionID")
+	where "SubredditName" = '
+EOD;
+$profanityqueryend = <<<'EOD'
+') as t3
+group by "SubredditName"
+EOD;
+$profanityquery = $profanityquerybegin . $sanitized . $profanityqueryend;
+$profanityresult = pg_query($profanityquery) or die('Query failed: ' . pg_last_error());
+// get as php table
+$profanitytable = pg_fetch_all($profanityresult);
+// Free memory
+pg_free_result($profanityresult);
+
+// DOES Exist In Table:
+if ($profanitytable != false) {
+echo "<meta http-equiv='refresh' content='0; url=result.php?subreddit-input=";
+echo $sanitized;
+echo "' />";
+} else {
+
+// TODO RUN PRAW SCRIPT WITH THIS ARGUM,ENT
+exec("python3 praw-everything.py" . $sanitized);
+
+}
+
+
+
+
+
+
+
+
+
+?>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reddit Thingamajig | Sorry...</title>
@@ -49,7 +97,7 @@
       </div>
     </div> <!-- end fullwidth row -->
     <div class='row'> <!-- main content jumbo row -->
-        We don't have any data on /r/<?php echo $_GET["subreddit-input"]; ?> right now.  But, we've started scraping it for you. Check back in 20 minutes or so! Partial data will be available sooner.
+        We don't have any data on /r/<?php echo $_GET["subreddit-input"]; ?> right now.  But, we've just started getting it for you! Hit refresh to see what we've got so far, and check back in 20 minutes for fully accurate information.
     </div> <!-- end main content jumbo row -->
 
 
