@@ -21,6 +21,12 @@ $profanityqueryend = <<<'EOD'
 ') as t3
 group by "SubredditName"
 EOD;
+
+// Average niceness across reddit
+$avgnicenessquery = <<<'EOD'
+select avg()
+EOD;
+
 $profanityquery = $profanityquerybegin . $sanitized . $profanityqueryend;
 $profanityresult = pg_query($profanityquery) or die('Query failed: ' . pg_last_error());
 // get as php table

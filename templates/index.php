@@ -43,7 +43,7 @@
   <div class="row fullwidth">
     <div class="large-12 columns">
       <div class="row">   <!-- Jumbo Header -->
-        <div class="small-6 small-centered columns jumbo">
+        <div class="large-8 large-centered columns jumbo">
           <h1>Get insights on your<br> favorite* subreddits</h1>
           <h3>Enter a subreddit name below and we'll tell you how it measures up.</h3>
         </div>
@@ -73,7 +73,7 @@
  
     <div class='row'> <!-- main content header row -->
       <div class="small-12 columns">
-        <p>Here are some interesting summaries of the information collected so far.</p>
+        <p>Here are some interesting statistics we've from the information we've collected so far. Click on any subreddit name to see more details about that subreddit!</p>
       </div>
     </div> <!-- end main content header row -->
 <?php
@@ -82,12 +82,11 @@ $dbconn = pg_connect("host=cs437dbinstance.cpa1yidpzcc3.us-east-1.rds.amazonaws.
     or die('Could not connect: ' . pg_last_error());
 ?>
 
-
     <div class="row bigwidth"> <!-- main content row 1 -->
-      <div class='small-4 columns'>
+      <div class='large-4 columns'> <!-- trigger happiness -->
         <div class='stat-box'>
-          <h3><i class='fi-arrow-up'></i><i class='fi-arrow-down'></i>&nbsp;Most trigger-happy subreddits</h3>
-          <p>Ooh, shiny buttons!<br>How many people vote on an average post (relative to subscribership).</p>
+          <h3><i class='fi-arrow-up'></i><i class='fi-arrow-down'></i>&nbsp;Trigger-happy subreddits</h3>
+          <p>Ooh, shiny buttons! Based on the number of votes per submission, normalized for subscribership.</p>
           <?php
             // Performing SQL query
             // multiline strings start with <<<'EOD' and end with EOD;
@@ -115,6 +114,7 @@ EOD;
             // Free memory
             pg_free_result($result);
           ?>
+
           <ol>
             <?php 
             for ($i="0"; $i<3; $i=$i+1){
@@ -122,18 +122,19 @@ EOD;
                 echo $table[$i]["SubredditName"];
                 echo "'><strong>";
                 echo $table[$i]["SubredditName"];
-                echo "</strong></a> with trigger happiness index <strong>";
-                echo round($table[$i]["TriggerHappiness"],6);
+                echo "</strong></a> with trigger-happiness of <strong>";
+                echo round($table[$i]["TriggerHappiness"]*10000,2);
                 echo "</strong></li>";
             }
             ?>
           </ol>
         </div>
       </div>
-      <div class='small-4 columns'>
+      <div class='large-4 columns'> <!-- meanest subreddits -->
         <div class='stat-box'>
           <h3><i class='fi-arrow-down'></i><i class='fi-arrow-down'></i>&nbsp;Meanest subreddits</h3>
-          <p>If you're looking for a friendly place, this isn't it.<br> Percentage of votes that are upvotes (smallest values).</p>
+          <p>If you're looking for a friendly place, this isn't it.
+          <br> Lowest percentage of votes that are upvotes.</p>
           <?php
             // Performing SQL query
             $query = <<<'EOD'
@@ -167,20 +168,20 @@ EOD;
                 echo $table[$i]["SubredditName"];
                 echo "'><strong>";
                 echo $table[$i]["SubredditName"];
-                echo "</strong></a> with a ratio of <strong>";
-                echo round($table[$i]["Niceness"],2);
-                echo "</strong></li>";
+                echo "</strong></a> with <strong>";
+                echo round($table[$i]["Niceness"]*100,2);
+                echo "%</strong> upvotes</li>";
             }
           ?></ol>
         </div>
       </div>
-      <div class='small-4 columns'>
+      <div class='large-4 columns'> <!-- nicest subreddits -->
         <div class='stat-box'>
           <h3><i class='fi-heart'></i>&nbsp;Nicest subreddits</h3>
-          <p>So much orange!<br> Percent of votes that are upvotes.</p>
-          <?php
-            // Performing SQL query
-            $query = <<<'EOD'
+          <p>So much orange!<br> Highest percentage of votes that are upvotes.</p>
+<?php
+// Performing SQL query
+$query = <<<'EOD'
 --Nicest subreddits
 --Subreddits with highest average percentage of upvotes in its submissions
 select "SubredditName", "Niceness"
@@ -211,9 +212,9 @@ EOD;
                 echo $table[$i]["SubredditName"];
                 echo "'><strong>";
                 echo $table[$i]["SubredditName"];
-                echo "</strong></a> with a ratio of <strong>";
-                echo round($table[$i]["Niceness"],2);
-                echo "</strong></li>";
+                echo "</strong></a> with <strong>";
+                echo round($table[$i]["Niceness"]*100,2);
+                echo "%</strong> upvotes</li>";
             }
           ?>
           </ol>
@@ -222,13 +223,14 @@ EOD;
     </div> <!-- end main content row 1 -->
 
     <div class="row bigwidth"> <!-- main content row 2 -->
-      <div class='small-4 columns'>
+      <div class='large-4 columns'> <!-- enthusiastic -->
         <div class='stat-box'>
-          <h3><i class='fi-volume'></i>&nbsp;Most enthusiastic subreddits</h3>
-          <p>THESE PEOPLE USE A LOT OF CAPS AND PUNCTUATION?!?!!<br> Ratio of UPPERCASE and ?! to lowercase. [IS THE DESCRIPTION CORRECT?]</p>
+          <h3><i class='fi-volume'></i>&nbsp;Enthusiastic subreddits</h3>
+          <p>THEY USE LOTS OF CAPS AND PUNCTUATION?!?!!<br> 
+          (opposed to lowercase, in comments.)</p>
           <?php
             // Performing SQL query
-            $query = <<<'EOD'
+$query = <<<'EOD'
 --Most enthusiastic subreddits
 --Gives subreddits that use a lot of uppercase characters and exclamation marks
 select "SubredditName", "AvgEnthusiasmScore"
@@ -257,27 +259,27 @@ EOD;
             pg_free_result($result);
           ?>
           <ol>
-          <?php 
-            for ($i="0"; $i<3; $i=$i+1){
-                echo "<li><a href='result.php?subreddit-input=";
-                echo $table[$i]["SubredditName"];
-                echo "'><strong>";
-                echo $table[$i]["SubredditName"];
-                echo "</strong></a> with a ratio of <strong>";
-                echo round($table[$i]["AvgEnthusiasmScore"],2);
-                echo "</strong></li>";
-            }
-          ?>
+            <?php 
+              for ($i="0"; $i<3; $i=$i+1){
+                  echo "<li><a href='result.php?subreddit-input=";
+                  echo $table[$i]["SubredditName"];
+                  echo "'><strong>";
+                  echo $table[$i]["SubredditName"];
+                  echo "</strong></a> with an enthusiasm of <strong>";
+                  echo round($table[$i]["AvgEnthusiasmScore"],2);
+                  echo "</strong></li>";
+              }
+            ?>
           </ol>
         </div>
       </div>
-      <div class='small-4 columns'>
+      <div class='large-4 columns'> <!-- profane subs -->
         <div class='stat-box'>
-          <h3><i class='fi-comment-minus'></i>&nbsp;Most profane subreddits</h3>
-          <p>#@$^$*#&!<br> Profanity as a percentage of all words in comments. [THIS DESCRIPTION MUST NOT BE CORRECT]</p>
+          <h3><i class='fi-comment-quotes'></i>&nbsp;Most profane subreddits</h3>
+          <p>#@$^$*#&! Profanity as a percentage of all words in comments on that subreddit.</p>
           <?php
             // Performing SQL query
-            $query = <<<'EOD'
+$query = <<<'EOD'
 --Most profane subreddits
 --Gives the subreddits with the highest average profanity score in the submissions. Each submission has a profanity score, which is calculated from its comments. Also, cut off subreddits with fewer than 100 subscribers.
 select "SubredditName", "AvgProfanityScore"
@@ -312,34 +314,22 @@ EOD;
                 echo $table[$i]["SubredditName"];
                 echo "'><strong>";
                 echo $table[$i]["SubredditName"];
-                echo "</strong></a> with a ratio of <strong>";
-                echo round($table[$i]["AvgProfanityScore"],2);
-                echo "</strong></li>";
+                echo "</strong></a> with <strong>";
+                echo round($table[$i]["AvgProfanityScore"]*100,2);
+                echo "%</strong> profanity</li>";
             }
           ?>
           </ol>
         </div>
       </div>
-      <!--
-      <div class='small-4 columns'>
+      <div class='large-4 columns'> <!-- profane users -->
         <div class='stat-box'>
-          <h3><i class='fi-heart'></i>&nbsp;Most verbose??? subreddits</h3>
-          <p><a href="http://giantitp.com">Vaarsuvius</a> would be proud.<br> Average number of words per post.</p>
-          <ol>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-            <li><a href='#'><strong>subreddit name</strong></a> with a ratio of <strong>x.xx</strong></li>
-          </ol>
-        </div>
-      </div>
-    </div> -->
-      <div class='small-4 columns'>
-        <div class='stat-box'>
-          <h3><i class='fi-comment-minus'></i>&nbsp;Most profane <strong>users</strong></h3>
-          <p>#@$^$*#&!<br> based on their comments.</p>
+          <h3><i class='fi-torso'></i>&nbsp;Most profane users</h3>
+          <p>You know which subreddits swear a lot...now meet the ones doing it. 
+          Percentage of profanity in user's comments.</p>
           <?php
             // Performing SQL query
-            $query = <<<'EOD'
+$query = <<<'EOD'
 --Most profane users, based on their comments. Only users with at least 10 comments are considered. 
 select "Username", "AvgProfanityScore"
 from
@@ -372,21 +362,24 @@ EOD;
             for ($i="0"; $i<3; $i=$i+1){
                 echo "<li><strong>";
                 echo $table[$i]["Username"];
-                echo "</strong> with a score of <strong>";
-                echo round($table[$i]["AvgProfanityScore"],2);
-                echo "</strong></li>";
+                echo "</strong> with <strong>";
+                echo round($table[$i]["AvgProfanityScore"]*100,2);
+                echo "%</strong> profanity</li>";
             }
           ?>
           </ol>
         </div>
       </div>
-      <div class='small-4 columns'>
+    </div>
+
+<div class='row bigwidth'>
+      <div class='large-4 columns'> <!-- enthusiastic users -->
         <div class='stat-box'>
-          <h3><i class='fi-volume'></i>&nbsp;Most enthusiastic <strong>users</strong></h3>
-          <p><br> based on their comments.</p>
+          <h3><i class='fi-torsos-all'></i>&nbsp;Most enthusiastic <strong>users</strong></h3>
+          <p>THESE PEOPLE LIKE SHOUTING?!<br>Based on the contents of user comments.</p>
           <?php
             // Performing SQL query
-            $query = <<<'EOD'
+$query = <<<'EOD'
 --Most enthusiastic users, based on their comments. Only users with at least 10 comments are included.
 select "Username", "AvgEnthusiasmScore"
 from
@@ -419,7 +412,7 @@ EOD;
             for ($i="0"; $i<3; $i=$i+1){
                 echo "<li><strong>";
                 echo $table[$i]["Username"];
-                echo "</strong> with a score of <strong>";
+                echo "</strong> with an enthusiasm of <strong>";
                 echo round($table[$i]["AvgEnthusiasmScore"],2);
                 echo "</strong></li>";
             }
@@ -427,10 +420,11 @@ EOD;
           </ol>
         </div>
       </div>
-      <div class='small-4 columns'>
+
+      <div class='large-4 columns'>
         <div class='stat-box'>
-          <h3>&nbsp;Most highly voted <strong>users</strong></h3>
-          <p><br> based on their submissions.</p>
+          <h3><i class='fi-arrows-out'></i>&nbsp;Top submitters</h3>
+          <p>We like them!<br>Percentage upvotes on their submissions.</p>
           <?php
             // Performing SQL query
             $query = <<<'EOD'
@@ -466,18 +460,18 @@ EOD;
             for ($i="0"; $i<3; $i=$i+1){
                 echo "<li><strong>";
                 echo $table[$i]["Username"];
-                echo "</strong> with a score of <strong>";
-                echo round($table[$i]["UserSubmissionPopularity"],2);
-                echo "</strong></li>";
+                echo "</strong> with <strong>";
+                echo round($table[$i]["UserSubmissionPopularity"]*100,2);
+                echo "%</strong> upvotes</li>";
             }
           ?>
           </ol>
         </div>
       </div>
-      <div class='small-4 columns'>
+      <div class='large-4 columns'>
         <div class='stat-box'>
-          <h3>&nbsp;Least highly voted <strong>users</strong></h3>
-          <p><br> based on their submissions.</p>
+          <h3><i class='fi-arrows-in'></i>&nbsp;Unpopular submitters</h3>
+          <p>We...don't like these as much.<br>Percentage upvotes on their submissions.</p>
           <?php
             // Performing SQL query
             $query = <<<'EOD'
@@ -521,11 +515,13 @@ EOD;
           </ol>
         </div>
       </div>
+    </div> <!-- end content row 3 -->
 
-      <div class='small-4 columns'>
+<div class='row bigwidth'> <!-- content row 4 -->
+      <div class='large-4 columns'>
         <div class='stat-box'>
-          <h3>&nbsp;Highly voted commenters.</h3>
-          <p><br>The redditors with the highest average upvote percentage, based on their comments.</p>
+          <h3><i class='fi-comments'></i>&nbsp;Popular commenters</h3>
+          <p>Redditors with the highest average upvote percentage, based on their comments.</p>
           <?php
             // Performing SQL query
             $query = <<<'EOD'
@@ -570,10 +566,11 @@ EOD;
         </div>
       </div>
       
-      <div class='small-4 columns'>
+
+      <div class='large-4 columns'>
         <div class='stat-box'>
-          <h3>&nbsp;Least highly voted commenters.</h3>
-          <p><br>The redditors with the lowest average upvote percentage, based on their comments.</p>
+          <h3><i class='fi-comment-minus'></i>&nbsp;Unpopular commenters.</h3>
+          <p>Redditors with the lowest average upvote percentage, based on their comments.</p>
           <?php
             // Performing SQL query
             $query = <<<'EOD'
@@ -617,23 +614,20 @@ EOD;
           </ol>
         </div>
       </div>
-      
-    <!-- end main content row 2 -->
 
-    <div class="row bigwidth"> <!-- main content row 3 -->
-<!--     <div class="small-4 columns">
-      <div class="stat-box">
-        <h3>Average comments-to-votes ratio or something, something nice to show in a chart</h3>
-        Insert a chart here
+      <div class='large-4 columns'>
+          <h2>Thanks for using!</h2>
+          <div class='row'>
+            <div class='small-6 columns'>
+              <p>Leaving already? Try this out with your favorite subreddit!</p>
+            </div>
+            <div class='small-6 columns'>
+              <img src='http://www.redditstatic.com/about/assets/reddit-alien.png' width='150' class='right'>
+            </div>
       </div>
-     </div>
-     <div class="small-8 columns">
-      <div class="stat-box">
-        <h3>Go ahead and give it a try!</h3>
-        <p>Here is some copy to make it sound more impressive than it actually is. I guess describe it too.</p>
       </div>
--->
-    </div> <!-- end main content row 3 -->
+    <!-- end main content row 4 -->
+
 
 
     <!-- End Content -->
