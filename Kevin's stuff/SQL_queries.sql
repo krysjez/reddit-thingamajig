@@ -104,25 +104,60 @@ order by "Niceness" asc
 --Average of triggerhappiness, niceness, enthusiasm, and profanity across all subreddits---
 -------------------------------------------------------------------------------------------
 
---Average trigger-happiness of all subreddits
-
-select "SubredditName", "AvgVotes" / ("Subscribers"+1) as "TriggerHappiness"
+--Average trigger-happiness of all subreddits, including ones with fewer than 100 subscribers
+select avg("TriggerHappiness") as "AvgTriggerHappiness"
 from
 (
-	select "SubredditName", avg("Upvotes"+"Downvotes") as "AvgVotes"
-	from "Submissions"
-	group by "SubredditName"
-) as t1
-natural join
-(
-	select "SubredditName", "Subscribers"
-	from "Subreddits"
-	where "Subscribers" >= 100
-) as t2
-order by "TriggerHappiness" desc
+	select "SubredditName", "AvgVotes" / ("Subscribers"+1) as "TriggerHappiness"
+	from
+	(
+		select "SubredditName", avg("Upvotes"+"Downvotes") as "AvgVotes"
+		from "Submissions"
+		group by "SubredditName"
+	) as t1
+) as t3
 ;
 
+--Average niceness of all subreddits, including ones with fewer than 100 subscribers
+select avg("Niceness") as "AvgNiceness"
+from
+(
+	select "SubredditName", "Niceness"
+	from
+	(
+		select "SubredditName", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "Niceness"
+		from "Submissions"
+		group by "SubredditName"
+	) as t1
+) as t2
 
+--Average enthusiasm of all subreddits, including ones with fewer than 100 subscribers.
+select "SubredditName", avg("AvgEnthusiasmScore") as "AvgAvgEnthusiasmScore"
+from
+(
+	select "SubredditName", avg("EnthusiasmScore") as "AvgEnthusiasmScore"
+	from 
+	(
+		select "Comments"."EnthusiasmScore" as "EnthusiasmScore", "Submissions"."SubredditName" as "SubredditName"
+		from "Comments" join "Submissions" using ("SubmissionID")
+	) as t3
+	group by "SubredditName"
+) as t1
+;
+
+--Average profanity score across all subreddits, including ones with fewer than 100 subscribers.
+select "SubredditName", avg("AvgProfanityScore") as "AvgAvgProfanityScore"
+from
+(
+	select "SubredditName", avg("ProfanityScore") as "AvgProfanityScore"
+	from 
+	(
+		select "Comments"."ProfanityScore" as "ProfanityScore", "Submissions"."SubredditName" as "SubredditName"
+		from "Comments" join "Submissions" using ("SubmissionID")
+	) as t3
+	group by "SubredditName"
+) as t1
+;
 
 ------------------------------------------------------------------------
 --SQL queries specific to users, rather than subreddits-----------------
