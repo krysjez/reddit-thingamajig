@@ -8,6 +8,7 @@ import datetime
 import pg8000
 import pdb
 import sys
+from time import gmtime, strftime
 
 user_agent = ("Thingamajig437/experimental by augusthex krysjez and versere")
 r = praw.Reddit(user_agent=user_agent)
@@ -25,15 +26,8 @@ MAX_COMMENTS = 500
 SubredditName=str(sys.argv[1])
 print(SubredditName)
 # Need to make this actually the subreddit the user wants
-subreddit = r.get_subreddit(SubredditName)
-
-#this next block is just some code Kevin was using to debug
-#sid = 50505
-#first_name = "Barack"
-#last_name = "Obama"
-#enthusiasm_score = 0.5
-#cursor.execute("update public.\"test\" set \"Firstname\" = %s, \"Lastname\" = %s, \"TimeRecorded\" = (select now()), \"EnthusiasmScore\" = %s where \"StudentID\" = %s;", (first_name, last_name, enthusiasm_score, sid))
-#cursor.execute("insert into public.\"test\" (\"StudentID\", \"Firstname\", \"Lastname\", \"TimeRecorded\", \"EnthusiasmScore\") select %s, %s, %s, now(), %s where not exists (select 1 from public.\"test\" where \"StudentID\" = %s);", (sid, first_name, last_name, enthusiasm_score, sid))
+#SubredditName = "Planetside"
+subreddit = r.get_subreddit(SubredditName.lower())
 
 def upsert_to_users(username, linkkarma, commentkarma, timejoined):
 	cursor.execute("update public.\"Users\" set \"LinkKarma\" = %s, \"CommentKarma\" = %s, \"TimeJoined\" = to_timestamp(%s), \"TimeRecorded\" = (select now()) where \"Username\" = %s;", (linkkarma, commentkarma, timejoined, str(username)))
@@ -45,13 +39,13 @@ def upsert_to_comments(commentid, permalink, submissionid, upvotes, downvotes, c
 	
 def upsert_to_subreddits(subredditname, subscribers):
 	#pdb.set_trace()
-	cursor.execute("update public.\"Subreddits\" set \"Subscribers\" = %s, \"TimeRecorded\" = (select now()) where \"SubredditName\" = %s;", (subscribers, subredditname))
+	cursor.execute("update public.\"Subreddits\" set \"Subscribers\" = %s, \"TimeRecorded\" = (select now()) where \"SubredditName\" = %s;", (subscribers, subredditname.lower()))
 	#pdb.set_trace()
-	cursor.execute("insert into public.\"Subreddits\" (\"SubredditName\", \"Subscribers\", \"TimeRecorded\") select %s, %s, now() where not exists (select 1 from public.\"Subreddits\" where \"SubredditName\" = %s);", (subredditname, subscribers, subredditname))
+	cursor.execute("insert into public.\"Subreddits\" (\"SubredditName\", \"Subscribers\", \"TimeRecorded\") select %s, %s, now() where not exists (select 1 from public.\"Subreddits\" where \"SubredditName\" = %s);", (subredditname.lower(), subscribers, subredditname.lower()))
 
 def upsert_to_submissions(submissionid, permalink, upvotes, downvotes, title, linkto, selftext, timesubmitted, subredditname):
 	cursor.execute("update public.\"Submissions\" set \"Permalink\" = %s, \"Upvotes\" = %s, \"Downvotes\" = %s, \"Title\" = %s, \"LinkTo\" = %s, \"SelfText\" = %s, \"TimeSubmitted\" = to_timestamp(%s), \"SubredditName\" = %s, \"TimeRecorded\" = (select now()) where \"SubmissionID\" = %s;", (permalink, upvotes, downvotes, title, linkto, selftext, timesubmitted, subredditname, submissionid))
-	cursor.execute("insert into public.\"Submissions\" (\"SubmissionID\", \"Permalink\", \"Upvotes\", \"Downvotes\", \"Title\", \"LinkTo\", \"SelfText\", \"TimeSubmitted\", \"SubredditName\", \"TimeRecorded\") select %s, %s, %s, %s, %s, %s, %s, to_timestamp(%s), %s, now() where not exists (select 1 from public.\"Submissions\" where \"SubmissionID\" = %s);", (submissionid, permalink, upvotes, downvotes, title, linkto, selftext, timesubmitted, subredditname, submissionid))
+	cursor.execute("insert into public.\"Submissions\" (\"SubmissionID\", \"Permalink\", \"Upvotes\", \"Downvotes\", \"Title\", \"LinkTo\", \"SelfText\", \"TimeSubmitted\", \"SubredditName\", \"TimeRecorded\") select %s, %s, %s, %s, %s, %s, %s, to_timestamp(%s), %s, now() where not exists (select 1 from public.\"Submissions\" where \"SubmissionID\" = %s);", (submissionid, permalink, upvotes, downvotes, title, linkto, selftext, timesubmitted, subredditname.lower(), submissionid))
 
 def insert_to_user_submitted(username, submissionid):
 	cursor.execute("insert into public.\"User_submitted\" (\"Username\", \"SubmissionID\") select %s, %s where not exists (select 1 from public.\"User_submitted\" where \"Username\" = %s and \"SubmissionID\" = %s);", (str(username), submissionid, str(username), submissionid))
@@ -60,7 +54,7 @@ def insert_to_user_commented(username, commentid):
 	cursor.execute("insert into public.\"User_commented\" (\"Username\", \"CommentID\") select %s, %s where not exists (select 1 from public.\"User_commented\" where \"Username\" = %s and \"CommentID\" = %s);", (str(username), commentid, str(username), commentid))
 	
 def insert_to_user_moderates(username, subredditname):
-	cursor.execute("insert into public.\"User_moderates\" (\"Username\", \"SubredditName\") select %s, %s where not exists (select 1 from public.\"User_moderates\" where \"Username\" = %s and \"SubredditName\" = %s);", (str(username), subredditname, str(username), subredditname))
+	cursor.execute("insert into public.\"User_moderates\" (\"Username\", \"SubredditName\") select %s, %s where not exists (select 1 from public.\"User_moderates\" where \"Username\" = %s and \"SubredditName\" = %s);", (str(username), subredditname.lower(), str(username), subredditname.lower()))
 	
 def cleanvote(vote):
 	if (vote < 0):
@@ -72,6 +66,7 @@ upsert_to_subreddits(subreddit.display_name, subreddit.subscribers)
 
 #does the regex take care of plural forms of these words?
 badWords = ['ass', 'asshole', 'arsehole', 'bastard', 'bitch', 'clusterfuck', 'cock', 'cocks', 'cocksucker', 'crap', 'cunt', 'damn', 'dick', 'dickhead', 'dickwad', 'dumbass', 'dumbshit', 'fag', 'fags', 'fagot', 'fagots', 'faggot', 'faggots', 'fuck', 'fucker', 'fucking', 'fucks', 'goatcx', 'goatse', 'goddamn', 'idiot', 'moron', 'motherfucker', 'nigga', 'niggas', 'nigger', 'niggers', 'piss', 'pussy', 'shit', 'slut', 'stupid', 'wanker']
+
 
 # Attributes for table Submissions
 for submission in subreddit.get_new(limit=MAX_SUBMISSIONS):
@@ -92,8 +87,6 @@ for submission in subreddit.get_new(limit=MAX_SUBMISSIONS):
 		badWordCount = 0
 		wordCount = 0
 		CommentText = comment.body
-		#if not (isinstance(comment, praw.objects.MoreComments)) and any(string in comment.body.lower() for string in badWords):
-			#insultingPosts = insultingPosts + 1 #this doesn't seem to do anything. need to verify with jessica that it's ok to just remove this line.
 		enthu = CommentText.count('?') + CommentText.count('!') + sum(x.isupper() for x in CommentText)
 		lower = sum(x.islower() for x in CommentText)
 		EnthusiasmScore = (enthu)/float(lower+1)
