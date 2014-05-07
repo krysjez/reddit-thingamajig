@@ -7,7 +7,7 @@ conn = pg8000.connect(user="jessicayang", password="testing09876", database="thi
 #conn.autocommit = True
 cursor = conn.cursor()
 
-badWords = ['ass', 'asshole', 'arsehole', 'bastard', 'bitch', 'clusterfuck', 'cock', 'cocks', 'cocksucker', 'crap', 'cunt', 'damn', 'dick', 'dickhead', 'dickwad', 'dumbass', 'dumbshit', 'fag', 'fags', 'fagot', 'fagots', 'faggot', 'faggots', 'fuck', 'fucker', 'fucking', 'fucks', 'goatcx', 'goatse', 'goddamn', 'idiot', 'moron', 'motherfucker', 'nigga', 'niggas', 'nigger', 'niggers', 'piss', 'pussy', 'shit', 'slut', 'stupid', 'wanker']
+badWords = ['ass', 'asshole', 'assholes', 'arsehole', 'bastard', 'bastards', 'bitch', 'bitches', 'clusterfuck', 'cock', 'cocks', 'cocksucker', 'cocksuckers', 'crap', 'cunt', 'cunts', 'damn', 'damns', 'dick', 'dicks', 'dickhead', 'dickheads', 'dickwad', 'dickwads', 'dumbass', 'dumbshit', 'dumbshits', 'fag', 'fags', 'fagot', 'fagots', 'faggot', 'faggots', 'fuck', 'fucker', 'fucking', 'fucks', 'goatcx', 'goatse', 'goddamn', 'idiot', 'idiots', 'moron', 'morons', 'motherfucker', 'motherfuckers', 'nigga', 'niggas', 'nigger', 'niggers', 'piss', 'pussy', 'shit', 'shits', 'slut', 'sluts', 'stupid', 'wanker', 'wankers']
 	
 cursor.execute("select \"CommentID\", \"CommentText\" from \"Comments\" where \"TimeRecorded\" > '2014-05-07 01:10:00' and \"TimeRecorded\" < '2014-05-07 04:46:00';")
 
