@@ -127,13 +127,9 @@ from
 select avg("Niceness") as "AvgNiceness"
 from
 (
-	select "SubredditName", "Niceness"
-	from
-	(
-		select "SubredditName", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "Niceness"
-		from "Submissions"
-		group by "SubredditName"
-	) as t1
+	select "SubredditName", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "Niceness"
+	from "Submissions"
+	group by "SubredditName"
 ) as t2
 
 --Average enthusiasm of all subreddits, including ones with fewer than 100 subscribers.

@@ -9,6 +9,7 @@ $sanitized = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET["subreddit-input"]);
 // Connect to database (to run queries during the whole page)
 $dbconn = pg_connect("host=cs437dbinstance.cpa1yidpzcc3.us-east-1.rds.amazonaws.com dbname=thingamajig user=michaelnestler password=testing54321")
     or die('Could not connect: ' . pg_last_error());
+
 $profanityquerybegin = <<<'EOD'
 select "SubredditName", avg("ProfanityScore") as "AvgProfanityScore"
 from 
@@ -23,9 +24,22 @@ group by "SubredditName"
 EOD;
 
 // Average niceness across reddit
+
 $avgnicenessquery = <<<'EOD'
-select avg()
+--Average niceness of all subreddits, including ones with fewer than 100 subscribers
+select avg("Niceness") as "AvgNiceness"
+from
+(
+  select "SubredditName", avg("Upvotes"::float/("Downvotes"+"Upvotes"+1)) as "Niceness"
+  from "Submissions"
+  group by "SubredditName"
+) as t2
 EOD;
+
+$avgnicenessresult = pg_query($avgnicenessquery) or die('Query failed: ' . pg_last_error());
+$avgnicenesstable = pg_fetch_all($avgnicenessresult);
+pg_free_result($avgnicenessresult);
+$avgniceness = $avgnicenesstable[0]["AvgNiceness"];
 
 $profanityquery = $profanityquerybegin . $sanitized . $profanityqueryend;
 $profanityresult = pg_query($profanityquery) or die('Query failed: ' . pg_last_error());
@@ -167,14 +181,14 @@ $niceness = $nicenesstable[0]["Niceness"];
             echo "<span class='huge upvote'>";
         }
         echo round($niceness*100,2);
-        echo "</span>";
-        ?> percent upvotes
+        echo "%</span>";
+        ?> upvotes
         <!--
           <span class='huge upvote'>3 <i class='fi-arrow-up'></i></span>
           <span class='huge downvote'>18 <i class='fi-arrow-down'></i></span>
           -->
         </p>
-        <p>average on other subreddits: <?php echo $avgniceness*100; ?></p>
+        <p class='center'>average on other subreddits: <?php echo round($avgniceness*100,2); ?>%</p>
       </div>
       <!-- I don't think we ever calculated this
       <div class="small-4 columns">
