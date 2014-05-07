@@ -115,6 +115,11 @@ from
 		from "Submissions"
 		group by "SubredditName"
 	) as t1
+	natural join
+	(
+		select "SubredditName", "Subscribers"
+		from "Subreddits"
+	) as t2
 ) as t3
 ;
 
