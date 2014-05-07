@@ -332,6 +332,11 @@ from
 	where "SubredditName" = --INSERT HERE BUT MAKE SURE TO SANITIZE INPUT TO PREVENT INJECTIONS
 	group by "SubredditName"
 ) as t1
+natural join
+(
+	select "SubredditName", "Subscribers"
+	from "Subreddits"
+) as t2
 ;
 
 --"Niceness" of upvotes out of total votes
