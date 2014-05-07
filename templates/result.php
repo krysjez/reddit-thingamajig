@@ -232,7 +232,7 @@ $niceness = $nicenesstable[0]["Niceness"];
           </div>
           <div class='reddit-search large-3 columns'>
           <form action="result.php" method="get">
-              <input type='text' id='search-again-input' placeholder='<?php echo $sanitized; ?>' name="subreddit-input"></input>
+              <input type='text' id='search-again-input' placeholder='<?php echo $sanitized; ?>' name="subreddit-input" value='<?php echo $sanitized;?>'></input>
           </div>
           <div class="reddit-search large-2 columns left">
             <input type="submit" class='button search-button' id='reddit-search-button' value="Crunch numbers again!">
