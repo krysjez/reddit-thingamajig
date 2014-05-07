@@ -100,6 +100,29 @@ natural join
 ) as t2
 order by "Niceness" asc
 
+-------------------------------------------------------------------------------------------
+--Average of triggerhappiness, niceness, enthusiasm, and profanity across all subreddits---
+-------------------------------------------------------------------------------------------
+
+--Average trigger-happiness of all subreddits
+
+select "SubredditName", "AvgVotes" / ("Subscribers"+1) as "TriggerHappiness"
+from
+(
+	select "SubredditName", avg("Upvotes"+"Downvotes") as "AvgVotes"
+	from "Submissions"
+	group by "SubredditName"
+) as t1
+natural join
+(
+	select "SubredditName", "Subscribers"
+	from "Subreddits"
+	where "Subscribers" >= 100
+) as t2
+order by "TriggerHappiness" desc
+;
+
+
 
 ------------------------------------------------------------------------
 --SQL queries specific to users, rather than subreddits-----------------

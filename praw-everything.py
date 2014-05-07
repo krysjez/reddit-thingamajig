@@ -96,12 +96,12 @@ for submission in subreddit.get_new(limit=MAX_SUBMISSIONS):
 			#insultingPosts = insultingPosts + 1 #this doesn't seem to do anything. need to verify with jessica that it's ok to just remove this line.
 		enthu = CommentText.count('?') + CommentText.count('!') + sum(x.isupper() for x in CommentText)
 		lower = sum(x.islower() for x in CommentText)
-		EnthusiasmScore = (enthu+1)/float(lower+1)
+		EnthusiasmScore = (enthu)/float(lower+1)
 		for w in re.findall(r"\w+", CommentText):
 			if w in badWords:
 				badWordCount+=1
 			wordCount+=1
-		ProfanityScore = (badWordCount+1)/float(wordCount+1)
+		ProfanityScore = (badWordCount)/float(wordCount+1)
 		upsert_to_comments(comment.id, comment.permalink, comment._submission.id, cleanvote(comment.ups), cleanvote(comment.downs), comment.body, comment.created_utc, EnthusiasmScore, ProfanityScore)
 		# User who posted the comment
 		user = r.get_redditor(comment.author)
