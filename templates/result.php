@@ -10,20 +10,7 @@ $sanitized = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET["subreddit-input"]);
 $dbconn = pg_connect("host=cs437dbinstance.cpa1yidpzcc3.us-east-1.rds.amazonaws.com dbname=thingamajig user=michaelnestler password=testing54321")
     or die('Could not connect: ' . pg_last_error());
 
-$profanityquerybegin = <<<'EOD'
-select "SubredditName", avg("ProfanityScore") as "AvgProfanityScore"
-from 
-(
-	select "Comments"."ProfanityScore" as "ProfanityScore", "Submissions"."SubredditName" as "SubredditName"
-	from "Comments" join "Submissions" using ("SubmissionID")
-	where "SubredditName" = '
-EOD;
-$profanityqueryend = <<<'EOD'
-') as t3
-group by "SubredditName"
-EOD;
-
-// Average niceness across reddit
+// Average queries
 
 $avgnicenessquery = <<<'EOD'
 --Average niceness of all subreddits, including ones with fewer than 100 subscribers
@@ -41,6 +28,82 @@ $avgnicenesstable = pg_fetch_all($avgnicenessresult);
 pg_free_result($avgnicenessresult);
 $avgniceness = $avgnicenesstable[0]["AvgNiceness"];
 
+
+$avgtriggerquery = <<<'EOD'
+select avg("TriggerHappiness") as "AvgTriggerHappiness"
+from
+(
+  select "SubredditName", "AvgVotes" / ("Subscribers"+1) as "TriggerHappiness"
+  from
+  (
+    select "SubredditName", avg("Upvotes"+"Downvotes") as "AvgVotes"
+    from "Submissions"
+    group by "SubredditName"
+  ) as t1
+  natural join
+  (
+    select "SubredditName", "Subscribers"
+    from "Subreddits"
+  ) as t2
+) as t3
+EOD;
+
+$avgtriggerresult = pg_query($avgtriggerquery) or die('Query failed: ' . pg_last_error());
+$avgtriggertable = pg_fetch_all($avgtriggerresult);
+pg_free_result($avgtriggerresult);
+$avgtrigger = $avgtriggertable[0]["AvgTriggerHappiness"];
+
+$avgprofquery = <<<'EOD'
+select avg("AvgProfanityScore") as "AvgAvgProfanityScore"
+from
+(
+  select "SubredditName", avg("ProfanityScore") as "AvgProfanityScore"
+  from 
+  (
+    select "Comments"."ProfanityScore" as "ProfanityScore", "Submissions"."SubredditName" as "SubredditName"
+    from "Comments" join "Submissions" using ("SubmissionID")
+  ) as t3
+  group by "SubredditName"
+) as t1
+EOD;
+$avgprofresult = pg_query($avgprofquery) or die('Query failed: ' . pg_last_error());
+$avgproftable = pg_fetch_all($avgprofresult);
+pg_free_result($avgprofresult);
+$avgprofanity = $avgproftable[0]["AvgAvgProfanityScore"];
+
+$avgenthquery = <<<'EOD'
+select avg("AvgEnthusiasmScore") as "AvgAvgEnthusiasmScore"
+from
+(
+  select "SubredditName", avg("EnthusiasmScore") as "AvgEnthusiasmScore"
+  from 
+  (
+    select "Comments"."EnthusiasmScore" as "EnthusiasmScore", "Submissions"."SubredditName" as "SubredditName"
+    from "Comments" join "Submissions" using ("SubmissionID")
+  ) as t3
+  group by "SubredditName"
+) as t1
+EOD;
+$avgenthresult = pg_query($avgenthquery) or die ('Query failed: ' . pg_last_error());
+$avgenthtable = pg_fetch_all($avgenthresult);
+pg_free_result($avgenthresult)
+$avgenthusiasm = $avgenthtable[0]["AvgAvgEnthusiasmScore"]
+
+// Per-subreddit queries
+
+$profanityquerybegin = <<<'EOD'
+select "SubredditName", avg("ProfanityScore") as "AvgProfanityScore"
+from 
+(
+	select "Comments"."ProfanityScore" as "ProfanityScore", "Submissions"."SubredditName" as "SubredditName"
+	from "Comments" join "Submissions" using ("SubmissionID")
+	where "SubredditName" = '
+EOD;
+$profanityqueryend = <<<'EOD'
+') as t3
+group by "SubredditName"
+EOD;
+
 $profanityquery = $profanityquerybegin . $sanitized . $profanityqueryend;
 $profanityresult = pg_query($profanityquery) or die('Query failed: ' . pg_last_error());
 // get as php table
@@ -55,6 +118,24 @@ echo $sanitized;
 echo "' />";
 }
 $profanity = $profanitytable[0]["AvgProfanityScore"];
+
+$triggerquerybegin = <<<'EOD'
+select "SubredditName", "AvgVotes" / ("Subscribers"+1) as "TriggerHappiness"
+from
+(
+  select "SubredditName", avg("Upvotes"+"Downvotes") as "AvgVotes"
+  from "Submissions"
+  where "SubredditName" = '
+EOD;
+$triggerqueryend = <<<'EOD'
+'group by "SubredditName"
+) as t1
+EOD;
+$triggerquery = $triggerquerybegin . $sanitized . $triggerqueryend;
+$triggerresult = pg_query($triggerquery) or die('Query failed:' . pg_last_error());
+$triggertable = pg_fetch_all($triggerresult);
+pg_free_result($triggerresult);
+$trigger = $triggertable[0]["TriggerHappiness"];
 
 $enthusiasmquerybegin = <<<'EOD'
 --Enthusiasm of that subreddit
@@ -95,13 +176,6 @@ pg_free_result($nicenessresult);
 $niceness = $nicenesstable[0]["Niceness"];
 
 
-
-//$niceness = "0.5";
-//$enthusiasm = "1.3";
-//$avgniceness = "0.6";
-//$avgenthusiasm = "0.7";
-//$profanity = "0.1";
-//$avgprofanity = "0.05";
 ?>
 
     <meta charset="utf-8" />
@@ -146,15 +220,15 @@ $niceness = $nicenesstable[0]["Niceness"];
   <div class="row fullwidth">
     <div class="large-12 columns">
       <div class='row search-bar'> <!-- search bar -->
-          <div class='small-5 columns search-again-prefix'>
+          <div class='large-5 columns search-again-prefix'>
             <i class='fi-social-reddit size-60'></i>
-            Here's what we found about /r/
+            Here's you go, /r/
           </div>
-          <div class='reddit-search small-3 columns'>
+          <div class='reddit-search large-3 columns'>
           <form action="result.php" method="get">
               <input type='text' id='search-again-input' placeholder='<?php echo $sanitized; ?>' name="subreddit-input"></input>
           </div>
-          <div class="reddit-search small-2 columns left">
+          <div class="reddit-search large-2 columns left">
             <input type="submit" class='button search-button' id='reddit-search-button' value="Crunch numbers again!">
           </div>
           </form>
@@ -163,8 +237,32 @@ $niceness = $nicenesstable[0]["Niceness"];
       </div>
     </div> <!-- end fullwidth row -->
     <div class='row'> <!-- main content jumbo row -->
-      <div class="small-4 columns">
-        <h1>it's 
+       <div class="large-3 columns">
+        <h2>it's 
+        <?php
+            if ($trigger < $avgtrigger) {
+                echo "negative";
+            } else {
+                echo "positive";
+            }
+        ?>
+        </h2>
+        <p>
+        <?php
+        if ($trigger < $avgtrigger) {
+            echo "<span class='huge downvote'>";
+        } else {
+            echo "<span class='huge upvote'>";
+        }
+        echo round($niceness*100,2);
+        echo "% up</span>";
+        ?>
+        </p>
+        <p class='center'>average on other subreddits: <strong><?php echo round($avgniceness*100,2); ?>%</strong></p>
+      </div>
+
+      <div class="large-3 columns">
+        <h2>it's 
         <?php
             if ($niceness < $avgniceness) {
                 echo "negative";
@@ -172,7 +270,7 @@ $niceness = $nicenesstable[0]["Niceness"];
                 echo "positive";
             }
         ?>
-        </h1>
+        </h2>
         <p>
         <?php
         if ($niceness < $avgniceness) {
@@ -181,49 +279,39 @@ $niceness = $nicenesstable[0]["Niceness"];
             echo "<span class='huge upvote'>";
         }
         echo round($niceness*100,2);
-        echo "%</span>";
-        ?> upvotes
-        <!--
-          <span class='huge upvote'>3 <i class='fi-arrow-up'></i></span>
-          <span class='huge downvote'>18 <i class='fi-arrow-down'></i></span>
-          -->
+        echo "% up</span>";
+        ?>
         </p>
-        <p class='center'>average on other subreddits: <?php echo round($avgniceness*100,2); ?>%</p>
+        <p class='center'>average on other subreddits: <strong><?php echo round($avgniceness*100,2); ?>%</strong></p>
       </div>
-      <!-- I don't think we ever calculated this
-      <div class="small-4 columns">
-        <h1>it's <?php //if($comments>$avgcomments){echo "vocal";}else{echo "quiet";} ?></h1>
+     
+      <div class="large-3 columns">
+        <h2>it's <?php if($enthusiasm>$avgenthusiasm){echo " ...'enthusiastic'";}else{echo "civil";} ?></h2>
         <p>
-          <span class='huge upvote'><?php //echo $comments; ?> <i class='fi-comment'></i></span> comments per post
+          <span class='huge'><?php echo round($enthusiasm,4); ?> <i class='fi-comment'></i></span>
+          <br>enthusiasm index
         </p>
-        <p>average on other subreddits: <?php //echo $avgcomments; ?></p>
-      </div> -->
-      <div class="small-4 columns">
-        <h1>it's <?php if($enthusiasm>$avgenthusiasm){echo " ...'enthusiastic'";}else{echo "civil";} ?></h1>
-        <p>
-          <span class='huge'><?php echo round($enthusiasm,4); ?> <i class='fi-comment'></i></span> ratio of CAPS to lowercase
-        </p>
-        <p>average on other subreddits: <?php echo $avgenthusiasm; ?></p>
+        <p>average on other subreddits: <strong><?php echo round($avgenthusiasm*100,2); ?>%</strong></p>
       </div>
-      <div class="small-4 columns">
-        <h1>it's <?php if($profanity>$avgprofanity){echo "profane";}else{echo "decent";} ?></h1>
+      <div class="large-3 columns">
+        <h2>it's <?php if($profanity>$avgprofanity){echo "profane";}else{echo "decent";} ?></h2>
         <p>
           <span class='huge'><?php echo round($profanity,4); ?> <i class='fi-comment'></i></span> profanity score
         </p>
-        <p>average on other subreddits: <?php echo $avgprofanity; ?></p>
+        <p>average on other subreddits: <strong><?php echo round($avgprofanity*100,2); ?>%</strong></p>
       </div>
     </div> <!-- end main content jumbo row -->
 
 <!--    <div class="row bigwidth"> <!-- main content row -->
-<!--      <div class='small-4 columns'>
+<!--      <div class='large-4 columns'>
           <h2>What this means</h2>
           <p>Wasdklfjasdkfjafjad</p>
           <img src='http://i.imgur.com/4VrgVJ5.jpg'>
           <p class='caption'>by /u/cartoonheroes</p>
       </div> <!-- end left side -->
-<!--      <div class='small-8 columns'> <!-- right side -->
+<!--      <div class='large-8 columns'> <!-- right side -->
 <!--        <div class='row'> <!-- sub row 1 -->
-<!--          <div class='small-6 columns'>
+<!--          <div class='large-6 columns'>
             <div class='stat-box'>
               <h3><i class='fi-heart'></i>&nbsp;Users with best karma</h3>
               <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
@@ -234,7 +322,7 @@ $niceness = $nicenesstable[0]["Niceness"];
               </ol>
             </div>
           </div>
-          <div class='small-6 columns'>
+          <div class='large-6 columns'>
             <div class='stat-box'>
               <h3><i class='fi-torsos-all'></i>&nbsp;Most active users</h3>
               <p>These people comment a lot.</p>
@@ -247,7 +335,7 @@ $niceness = $nicenesstable[0]["Niceness"];
           </div>
         </div> <!-- end sdub row 1 -->
 <!--        <div class='row'> <!-- sub row 2 -->
-<!--          <div class='small-6 columns'>
+<!--          <div class='large-6 columns'>
             <div class='stat-box'>
               <h3><i class='fi-heart'></i>&nbsp;Most profane users</h3>
               <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
@@ -258,7 +346,7 @@ $niceness = $nicenesstable[0]["Niceness"];
               </ol>
             </div>
           </div>
-          <div class='small-6 columns'>
+          <div class='large-6 columns'>
             <div class='stat-box'>
               <h3><i class='fi-heart'></i>&nbsp;Most ??? subreddits</h3>
               <p>So much orange!<br> Average ratio of upvotes to downvotes per post.</p>
@@ -274,7 +362,7 @@ $niceness = $nicenesstable[0]["Niceness"];
 <!--    </div> <!-- end main content row 1 -->
 
 <!--    <div class="row"> <!-- main content row 2 -->
-<!--      <div class='small-12 columns'>
+<!--      <div class='large-12 columns'>
         <div class='stat-box'>
           <h3>Tips for moderators</h3>
           <p>LOOK AT THIS INCREDIBLE VIDEO!!!<br> Ratio of UPPERCASE and punctuation to lowercase.</p>
@@ -290,7 +378,7 @@ $niceness = $nicenesstable[0]["Niceness"];
  
       <footer class="row">
         <hr> 
-          <div class="large-8 small-12 columns">
+          <div class="large-8 large-12 columns">
               <p>* or most hated. /r/___, I'm looking at you.</p>
               <p>Made for Introduction to Database Systems, CPSC 473 Spring 2014, Yale University</p>
           </div>
