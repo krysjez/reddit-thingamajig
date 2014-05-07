@@ -133,7 +133,7 @@ from
 ) as t2
 
 --Average enthusiasm of all subreddits, including ones with fewer than 100 subscribers.
-select "SubredditName", avg("AvgEnthusiasmScore") as "AvgAvgEnthusiasmScore"
+select avg("AvgEnthusiasmScore") as "AvgAvgEnthusiasmScore"
 from
 (
 	select "SubredditName", avg("EnthusiasmScore") as "AvgEnthusiasmScore"
@@ -147,7 +147,7 @@ from
 ;
 
 --Average profanity score across all subreddits, including ones with fewer than 100 subscribers.
-select "SubredditName", avg("AvgProfanityScore") as "AvgAvgProfanityScore"
+select avg("AvgProfanityScore") as "AvgAvgProfanityScore"
 from
 (
 	select "SubredditName", avg("ProfanityScore") as "AvgProfanityScore"
