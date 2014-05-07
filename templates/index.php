@@ -123,7 +123,7 @@ EOD;
                 echo "'><strong>";
                 echo $table[$i]["SubredditName"];
                 echo "</strong></a> with trigger happiness index <strong>";
-                echo round($table[$i]["TriggerHappiness"]*10000,2);
+                echo round($table[$i]["TriggerHappiness"],6);
                 echo "</strong></li>";
             }
             ?>

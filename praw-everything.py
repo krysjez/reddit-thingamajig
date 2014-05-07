@@ -22,7 +22,7 @@ MAX_COMMENTS = 500
 # Check reddit messages later to see if /r/redditdev replied
 
 # TODO: Store the subreddit name from PHP call as SubredditName
-SubredditName=sys.argv[1]
+SubredditName=str(sys.argv[1])
 print(SubredditName)
 # Need to make this actually the subreddit the user wants
 subreddit = r.get_subreddit(SubredditName)
